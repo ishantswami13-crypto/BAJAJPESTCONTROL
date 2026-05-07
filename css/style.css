@@ -1319,7 +1319,7 @@ p { color: var(--text-body); font-family: var(--font-body); }
 
 .t-slider {
   position: relative;
-  min-height: 280px;
+  min-height: 300px;
 }
 
 .t-card {
@@ -1797,19 +1797,62 @@ p { color: var(--text-body); font-family: var(--font-body); }
 }
 
 @media (max-width: 640px) {
+  /* NAV */
   .main-nav { display: none; }
   .header-phone { display: none; }
+
+  /* HERO */
+  .hero-section { padding: 80px 0 56px; }
+  .hero-title { font-size: 2rem; }
+  .hero-sub { font-size: .95rem; }
+  .hero-actions { flex-direction: column; align-items: stretch; gap: 12px; }
+  .hero-actions .btn { text-align: center; }
+  .hero-rating { flex-wrap: wrap; gap: 8px; justify-content: center; }
+
+  /* GRIDS */
   .services-grid,
   .services-grid-bottom { grid-template-columns: 1fr; }
   .why-grid { grid-template-columns: 1fr; }
   .trust-grid { grid-template-columns: 1fr; }
   .trust-stat:not(:last-child)::after { display: none; }
-  .mid-cta-inner { flex-direction: column; text-align: center; }
-  .mid-cta-actions { justify-content: center; }
-  .footer-grid { grid-template-columns: 1fr; }
-  .footer-bottom { flex-direction: column; text-align: center; }
-  .fab .fab-label { display: none; }
-  .fab { padding: 0; width: 52px; justify-content: center; }
+
+  /* TESTIMONIALS — fix card overflow on mobile */
+  .t-slider {
+    min-height: unset;
+    height: auto;
+  }
+  .t-card {
+    position: relative;
+    inset: auto;
+    display: none;
+    opacity: 1;
+    transform: none;
+    padding: 24px 20px;
+  }
+  .t-card.active {
+    display: block;
+    transform: none;
+  }
+  .t-text { font-size: .95rem; margin-bottom: 20px; }
+  .t-quote-mark { font-size: 3.5rem; margin-bottom: 0; }
+  .t-author { flex-wrap: wrap; gap: 10px; }
+  .t-stars { margin-left: 0; width: 100%; }
+
+  /* CTA FORM */
   .form-row { grid-template-columns: 1fr; }
   .cta-contact-alts { flex-direction: column; }
+  .mid-cta-inner { flex-direction: column; text-align: center; }
+  .mid-cta-actions { justify-content: center; }
+
+  /* FOOTER */
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+
+  /* FABs */
+  .fab .fab-label { display: none; }
+  .fab { padding: 0; width: 52px; justify-content: center; }
+
+  /* SECTION HEADINGS */
+  .section-title { font-size: 1.6rem; }
+  h2 { font-size: 1.5rem; }
 }
