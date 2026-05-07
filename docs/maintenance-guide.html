@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Maintenance Guide — Bajaj Pest Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#F5F5F5;color:#1A2332;line-height:1.7}
+    .topbar{background:#1A2332;padding:16px 24px;color:#fff;display:flex;align-items:center;justify-content:space-between}
+    .topbar a{color:rgba(255,255,255,.6);font-size:.85rem;text-decoration:none}
+    .container{max-width:860px;margin:0 auto;padding:40px 24px}
+    h1{font-size:1.75rem;font-weight:700;margin-bottom:8px}
+    .subtitle{color:#666;margin-bottom:40px}
+    .card{background:#fff;border-radius:12px;border:1px solid #E8E8E8;padding:24px;margin-bottom:20px}
+    .card-title{font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .freq{padding:3px 10px;border-radius:100px;font-size:.7rem;font-weight:600}
+    .daily{background:#DBEAFE;color:#1D4ED8}
+    .weekly{background:#DCFCE7;color:#166534}
+    .monthly{background:#FEF3C7;color:#92400E}
+    .task{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #F5F5F5;font-size:.875rem}
+    .task:last-child{border-bottom:none}
+    .task-ico{font-size:1rem;flex-shrink:0;margin-top:1px}
+    .task-body strong{display:block;font-weight:600;color:#1A2332}
+    .task-body span{color:#666;font-size:.82rem}
+    pre{background:#1A2332;color:#e8e8e8;padding:16px;border-radius:8px;font-size:.82rem;overflow-x:auto;margin:8px 0}
+    code{background:#1A2332;color:#4CAF7A;padding:2px 7px;border-radius:4px;font-family:monospace;font-size:.82rem}
+    .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .kpi{background:#F9FAFB;border-radius:8px;padding:14px;text-align:center}
+    .kpi-name{font-size:.75rem;color:#666;margin-bottom:4px}
+    .kpi-target{font-size:1rem;font-weight:700;color:#1B7D4B}
+    ul{padding-left:18px;font-size:.875rem;color:#444}
+    ul li{margin-bottom:6px}
+  </style>
+</head>
+<body>
+<div class="topbar">
+  <strong>🛡️ Bajaj Pest Control — Maintenance Guide</strong>
+  <a href="../admin/">← Admin Dashboard</a>
+</div>
+<div class="container">
+  <h1>🔧 Maintenance Guide</h1>
+  <p class="subtitle">Daily, weekly, and monthly tasks to keep the website performing at its best.</p>
+
+  <div class="card">
+    <div class="card-title">📅 Daily Tasks <span class="freq daily">Every Day</span></div>
+    <div class="task"><div class="task-ico">📋</div><div class="task-body"><strong>Check New Leads</strong><span>Open admin dashboard → review new leads → call them within 2 hours</span></div></div>
+    <div class="task"><div class="task-ico">🔔</div><div class="task-body"><strong>Check Email Notifications</strong><span>Verify email alerts are being received for form submissions</span></div></div>
+    <div class="task"><div class="task-ico">💚</div><div class="task-body"><strong>Verify Website is Online</strong><span>Visit bajajpestcontrol.in — confirm it loads within 3 seconds</span></div></div>
+    <div class="task"><div class="task-ico">💬</div><div class="task-body"><strong>Respond to WhatsApp Messages</strong><span>Check WhatsApp Business for messages from website visitors</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📆 Weekly Tasks <span class="freq weekly">Every Week</span></div>
+    <div class="task"><div class="task-ico">📊</div><div class="task-body"><strong>Review Analytics</strong><span>Check Google Analytics: sessions, bounce rate, conversion rate, top pages</span></div></div>
+    <div class="task"><div class="task-ico">⬇️</div><div class="task-body"><strong>Export Leads CSV</strong><span>Download leads from admin panel → save to Google Sheets/Excel for CRM</span></div></div>
+    <div class="task"><div class="task-ico">🔍</div><div class="task-body"><strong>Check Google Search Console</strong><span>Review impressions, clicks, ranking positions for key terms</span></div></div>
+    <div class="task"><div class="task-ico">📸</div><div class="task-body"><strong>Update Testimonials (if new reviews)</strong><span>Add fresh Google reviews to the testimonials section in index.html</span></div></div>
+    <div class="task"><div class="task-ico">🔒</div><div class="task-body"><strong>Check SSL Certificate</strong><span>Verify HTTPS padlock is present — SSL should auto-renew on Vercel/Netlify</span></div></div>
+    <div class="task"><div class="task-ico">💾</div><div class="task-body"><strong>Backup Leads Data</strong><span>Copy <code>data/leads.json</code> to secure cloud storage (Google Drive / Dropbox)</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📅 Monthly Tasks <span class="freq monthly">Every Month</span></div>
+    <div class="task"><div class="task-ico">🚀</div><div class="task-body"><strong>Lighthouse Audit</strong><span>Run Chrome DevTools Lighthouse → ensure scores stay above 85</span></div></div>
+    <div class="task"><div class="task-ico">📦</div><div class="task-body"><strong>Update npm Dependencies</strong>
+      <span>Keep packages secure and up-to-date</span>
+      <pre>cd C:\Users\Dell\Desktop\bajaj-final
+npm outdated        # See what needs updating
+npm update          # Update minor versions
+npm audit fix       # Fix security vulnerabilities</pre>
+    </div></div>
+    <div class="task"><div class="task-ico">🔑</div><div class="task-body"><strong>Rotate Admin Password</strong><span>Update ADMIN_PASSWORD in .env and redeploy for security</span></div></div>
+    <div class="task"><div class="task-ico">🗺️</div><div class="task-body"><strong>Update Sitemap Date</strong><span>Update <code>lastmod</code> dates in sitemap.xml and resubmit to Google Search Console</span></div></div>
+    <div class="task"><div class="task-ico">📝</div><div class="task-body"><strong>Content Review</strong><span>Check all phone numbers, email addresses, and pricing still accurate</span></div></div>
+    <div class="task"><div class="task-ico">📈</div><div class="task-body"><strong>Conversion Rate Review</strong><span>Calculate: Leads ÷ Visitors × 100. Target: 3-5% conversion rate</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 KPI Targets to Monitor</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-name">Form Conversion Rate</div><div class="kpi-target">> 3%</div></div>
+      <div class="kpi"><div class="kpi-name">Bounce Rate</div><div class="kpi-target">< 60%</div></div>
+      <div class="kpi"><div class="kpi-name">Avg Session Duration</div><div class="kpi-target">> 2 min</div></div>
+      <div class="kpi"><div class="kpi-name">Lighthouse Performance</div><div class="kpi-target">> 85</div></div>
+      <div class="kpi"><div class="kpi-name">Page Load Time</div><div class="kpi-target">< 3s</div></div>
+      <div class="kpi"><div class="kpi-name">Mobile Traffic %</div><div class="kpi-target">> 60%</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🆘 Troubleshooting Common Issues</div>
+    <div class="task"><div class="task-ico">🔴</div><div class="task-body"><strong>Server not starting</strong><span>Check: <code>node server.js</code> — look for error messages. Usually missing .env or npm install needed.</span></div></div>
+    <div class="task"><div class="task-ico">📧</div><div class="task-body"><strong>Emails not sending</strong><span>Verify SMTP_USER and SMTP_PASS in .env. For Gmail: use App Password, not login password. Enable 2FA first.</span></div></div>
+    <div class="task"><div class="task-ico">💾</div><div class="task-body"><strong>Leads not saving</strong><span>Check <code>data/</code> folder exists and is writable. View server logs for errors.</span></div></div>
+    <div class="task"><div class="task-ico">🔐</div><div class="task-body"><strong>Can't login to admin</strong><span>Check ADMIN_PASSWORD in .env. Default: <code>bajaj@admin2024</code>. Clear browser localStorage and retry.</span></div></div>
+    <div class="task"><div class="task-ico">🌐</div><div class="task-body"><strong>Website slow</strong><span>Run Lighthouse audit in Chrome DevTools (F12 → Lighthouse tab). Check images are not too large.</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💻 Quick Commands Reference</div>
+    <pre># Start the server
+cd C:\Users\Dell\Desktop\bajaj-final
+npm start
+
+# Start in dev mode (auto-restart on changes)
+npm run dev
+
+# View server logs
+type data\server.log
+
+# Backup leads
+copy data\leads.json data\leads-backup-%date%.json
+
+# Export leads CSV (in browser)
+# Go to: http://localhost:8083/api/admin/export?token=bajaj@admin2024
+
+# Check server health
+curl http://localhost:8083/api/health</pre>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# robots.txt — Bajaj Pest Control
+# https://www.bajajpestcontrol.in
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /data/
+Disallow: /.env
+
+# Sitemap location
+Sitemap: https://www.bajajpestcontrol.in/sitemap.xml
+
+# Crawl delay (be kind to server)
+Crawl-delay: 10

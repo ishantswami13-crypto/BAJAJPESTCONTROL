@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Bajaj Pest Control</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --green:#1B7D4B;--green-d:#155A3D;--green-t:#F0FAF5;
+      --navy:#1A2332;--gold:#D4AF37;
+      --gray:#F5F5F5;--border:#E8E8E8;--text:#1A2332;--muted:#666;
+      --red:#DC2626;--amber:#F59E0B;--blue:#3B82F6;
+    }
+    html{font-size:15px}
+    body{font-family:'Inter',sans-serif;background:var(--gray);color:var(--text);min-height:100vh}
+    a{color:inherit;text-decoration:none}
+
+    /* ── LOGIN ── */
+    #login-screen{
+      position:fixed;inset:0;background:var(--navy);
+      display:flex;align-items:center;justify-content:center;z-index:1000;
+    }
+    .login-card{
+      background:#fff;border-radius:16px;padding:40px;width:100%;max-width:380px;
+      box-shadow:0 24px 64px rgba(0,0,0,.4);text-align:center;
+    }
+    .login-logo{
+      width:56px;height:56px;background:var(--green);border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.2rem;font-weight:700;color:#fff;margin:0 auto 20px;
+    }
+    .login-title{font-size:1.4rem;font-weight:700;color:var(--navy);margin-bottom:6px}
+    .login-sub{font-size:.85rem;color:var(--muted);margin-bottom:28px}
+    .login-input{
+      width:100%;height:46px;padding:0 14px;border:1.5px solid var(--border);
+      border-radius:8px;font-family:inherit;font-size:.9rem;color:var(--navy);
+      outline:none;margin-bottom:12px;
+    }
+    .login-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(27,125,75,.1)}
+    .login-btn{
+      width:100%;height:46px;background:var(--green);color:#fff;border:none;
+      border-radius:8px;font-family:inherit;font-size:.95rem;font-weight:600;
+      cursor:pointer;transition:background .2s;
+    }
+    .login-btn:hover{background:var(--green-d)}
+    .login-error{color:var(--red);font-size:.82rem;margin-top:10px;display:none}
+
+    /* ── LAYOUT ── */
+    #app{display:none;min-height:100vh}
+
+    /* Sidebar */
+    .sidebar{
+      position:fixed;top:0;left:0;bottom:0;width:220px;
+      background:var(--navy);padding:0;z-index:100;
+    }
+    .sidebar-brand{
+      padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.1);
+      display:flex;align-items:center;gap:10px;
+    }
+    .sb-logo{
+      width:36px;height:36px;background:var(--green);border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:.85rem;font-weight:700;color:#fff;flex-shrink:0;
+    }
+    .sb-name{font-size:.875rem;font-weight:700;color:#fff;line-height:1.2}
+    .sb-sub{font-size:.65rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em}
+
+    .sidebar-nav{padding:12px 0}
+    .nav-section{
+      padding:8px 16px 4px;font-size:.65rem;font-weight:600;
+      letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);
+    }
+    .nav-item{
+      display:flex;align-items:center;gap:10px;padding:9px 16px;
+      font-size:.875rem;font-weight:500;color:rgba(255,255,255,.6);
+      cursor:pointer;transition:background .15s,color .15s;border-left:3px solid transparent;
+    }
+    .nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+    .nav-item.active{background:rgba(27,125,75,.2);color:var(--green);border-left-color:var(--green)}
+    .nav-item .ico{font-size:1rem;width:20px;text-align:center}
+
+    .sidebar-footer{
+      position:absolute;bottom:0;left:0;right:0;padding:14px 16px;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+    .logout-btn{
+      width:100%;padding:8px;background:rgba(220,38,38,.15);color:#F87171;
+      border:1px solid rgba(220,38,38,.3);border-radius:6px;font-family:inherit;
+      font-size:.82rem;font-weight:500;cursor:pointer;
+    }
+    .logout-btn:hover{background:rgba(220,38,38,.25)}
+
+    /* Main content */
+    .main{margin-left:220px;min-height:100vh}
+
+    .topbar{
+      background:#fff;border-bottom:1px solid var(--border);
+      padding:0 28px;height:62px;display:flex;align-items:center;
+      justify-content:space-between;position:sticky;top:0;z-index:50;
+    }
+    .page-title{font-size:1.1rem;font-weight:700;color:var(--navy)}
+    .topbar-right{display:flex;align-items:center;gap:16px}
+    .status-dot{
+      width:8px;height:8px;border-radius:50%;background:#22C55E;
+      box-shadow:0 0 0 3px rgba(34,197,94,.2);
+    }
+    .topbar-time{font-size:.8rem;color:var(--muted)}
+
+    /* Pages */
+    .page{display:none;padding:28px}
+    .page.active{display:block}
+
+    /* Stat cards */
+    .stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}
+    .stat-card{
+      background:#fff;border-radius:12px;padding:18px 20px;
+      border:1px solid var(--border);
+    }
+    .stat-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+    .stat-val{font-size:1.75rem;font-weight:700;color:var(--navy);line-height:1}
+    .stat-sub{font-size:.75rem;color:var(--muted);margin-top:4px}
+    .stat-card.green .stat-val{color:var(--green)}
+    .stat-card.amber .stat-val{color:var(--amber)}
+    .stat-card.blue  .stat-val{color:var(--blue)}
+    .stat-card.red   .stat-val{color:var(--red)}
+
+    /* Table */
+    .table-card{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden}
+    .table-header{
+      padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
+      border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;
+    }
+    .table-title{font-size:.95rem;font-weight:700;color:var(--navy)}
+    .table-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+    .btn{
+      height:36px;padding:0 14px;border-radius:7px;font-family:inherit;
+      font-size:.8rem;font-weight:600;cursor:pointer;border:1.5px solid transparent;
+      display:inline-flex;align-items:center;gap:6px;
+    }
+    .btn-primary{background:var(--green);color:#fff;border-color:var(--green)}
+    .btn-primary:hover{background:var(--green-d)}
+    .btn-outline{background:#fff;color:var(--navy);border-color:var(--border)}
+    .btn-outline:hover{border-color:var(--green);color:var(--green)}
+    .btn-danger{background:#FEF2F2;color:var(--red);border-color:rgba(220,38,38,.3)}
+    .btn-danger:hover{background:var(--red);color:#fff}
+
+    .search-input{
+      height:36px;padding:0 12px;border:1.5px solid var(--border);border-radius:7px;
+      font-family:inherit;font-size:.85rem;color:var(--navy);outline:none;min-width:200px;
+    }
+    .search-input:focus{border-color:var(--green)}
+
+    .filter-select{
+      height:36px;padding:0 10px;border:1.5px solid var(--border);border-radius:7px;
+      font-family:inherit;font-size:.82rem;color:var(--navy);outline:none;background:#fff;cursor:pointer;
+    }
+    .filter-select:focus{border-color:var(--green)}
+
+    table{width:100%;border-collapse:collapse}
+    thead tr{background:var(--gray)}
+    th{
+      padding:10px 16px;text-align:left;font-size:.72rem;font-weight:700;
+      letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+      border-bottom:1px solid var(--border);white-space:nowrap;
+    }
+    td{
+      padding:13px 16px;font-size:.85rem;border-bottom:1px solid var(--border);
+      vertical-align:middle;
+    }
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:#FAFAFA}
+
+    .badge{
+      display:inline-flex;align-items:center;padding:3px 10px;border-radius:100px;
+      font-size:.7rem;font-weight:600;text-transform:capitalize;
+    }
+    .badge-new{background:#DBEAFE;color:#1D4ED8}
+    .badge-contacted{background:#FEF3C7;color:#92400E}
+    .badge-converted{background:#DCFCE7;color:#166534}
+    .badge-lost{background:#FEE2E2;color:#991B1B}
+
+    .actions-cell{display:flex;gap:6px}
+    .icon-btn{
+      width:30px;height:30px;border-radius:6px;border:1.5px solid var(--border);
+      background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
+      font-size:.85rem;transition:background .15s,border-color .15s;
+    }
+    .icon-btn:hover{background:var(--gray);border-color:var(--green)}
+
+    .empty-state{
+      text-align:center;padding:60px 20px;
+    }
+    .empty-state .ico{font-size:3rem;margin-bottom:12px}
+    .empty-state p{color:var(--muted);font-size:.9rem}
+
+    /* Modal */
+    .modal-overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;
+      display:flex;align-items:center;justify-content:center;
+      opacity:0;pointer-events:none;transition:opacity .2s;
+    }
+    .modal-overlay.open{opacity:1;pointer-events:auto}
+    .modal{
+      background:#fff;border-radius:16px;padding:28px;width:100%;max-width:480px;
+      box-shadow:0 24px 64px rgba(0,0,0,.2);transform:scale(.95);transition:transform .2s;
+    }
+    .modal-overlay.open .modal{transform:scale(1)}
+    .modal-title{font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:20px}
+    .modal-field{margin-bottom:14px}
+    .modal-label{font-size:.78rem;font-weight:600;color:var(--navy);margin-bottom:6px;display:block}
+    .modal-input,.modal-select,.modal-textarea{
+      width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:7px;
+      font-family:inherit;font-size:.875rem;color:var(--navy);outline:none;
+    }
+    .modal-input:focus,.modal-select:focus,.modal-textarea:focus{border-color:var(--green)}
+    .modal-textarea{min-height:80px;resize:vertical}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+    /* Charts */
+    .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+    .chart-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:20px}
+    .chart-title{font-size:.875rem;font-weight:700;color:var(--navy);margin-bottom:16px}
+
+    .bar-list{display:flex;flex-direction:column;gap:10px}
+    .bar-item{display:flex;align-items:center;gap:10px;font-size:.82rem}
+    .bar-label{width:120px;color:var(--muted);flex-shrink:0;truncate:true;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bar-track{flex:1;height:8px;background:var(--gray);border-radius:100px;overflow:hidden}
+    .bar-fill{height:100%;background:var(--green);border-radius:100px;transition:width .5s}
+    .bar-count{width:30px;text-align:right;font-weight:600;color:var(--navy);flex-shrink:0}
+
+    .day-chart{display:flex;align-items:flex-end;gap:6px;height:80px}
+    .day-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+    .day-bar-outer{width:100%;flex:1;display:flex;align-items:flex-end;background:var(--gray);border-radius:4px;overflow:hidden}
+    .day-bar-inner{width:100%;background:var(--green);border-radius:4px;transition:height .5s;min-height:2px}
+    .day-label{font-size:.65rem;color:var(--muted)}
+
+    /* Settings */
+    .settings-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:24px;margin-bottom:16px}
+    .settings-title{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+    .setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+    .setting-row:last-child{border-bottom:none}
+    .setting-info .s-label{font-size:.875rem;font-weight:500;color:var(--navy)}
+    .setting-info .s-desc{font-size:.78rem;color:var(--muted);margin-top:2px}
+    .setting-val{font-family:monospace;font-size:.8rem;color:var(--muted)}
+
+    /* Toast */
+    #toast{
+      position:fixed;bottom:24px;right:24px;z-index:9999;
+      background:var(--navy);color:#fff;padding:12px 20px;border-radius:10px;
+      font-size:.875rem;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.3);
+      transform:translateY(80px);opacity:0;transition:transform .3s,opacity .3s;
+    }
+    #toast.show{transform:translateY(0);opacity:1}
+    #toast.success{background:var(--green)}
+    #toast.error{background:var(--red)}
+
+    /* Responsive */
+    @media(max-width:900px){
+      .sidebar{transform:translateX(-100%)}
+      .main{margin-left:0}
+      .stat-row{grid-template-columns:repeat(2,1fr)}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">BPC</div>
+    <div class="login-title">Admin Dashboard</div>
+    <div class="login-sub">Bajaj Pest Control · Lead Management</div>
+    <input type="password" class="login-input" id="login-pass" placeholder="Enter admin password" autocomplete="current-password">
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="login-error" id="login-error">❌ Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sb-logo">BPC</div>
+      <div>
+        <div class="sb-name">Bajaj Pest Control</div>
+        <div class="sb-sub">Admin Panel</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">Overview</div>
+      <div class="nav-item active" onclick="showPage('dashboard')" data-page="dashboard">
+        <span class="ico">📊</span> Dashboard
+      </div>
+
+      <div class="nav-section">Leads</div>
+      <div class="nav-item" onclick="showPage('leads')" data-page="leads">
+        <span class="ico">📋</span> All Leads
+      </div>
+      <div class="nav-item" onclick="showPage('leads'); filterByStatus('new')" data-page="">
+        <span class="ico">🆕</span> New Leads
+      </div>
+      <div class="nav-item" onclick="showPage('leads'); filterByStatus('converted')" data-page="">
+        <span class="ico">✅</span> Converted
+      </div>
+
+      <div class="nav-section">Analytics</div>
+      <div class="nav-item" onclick="showPage('analytics')" data-page="analytics">
+        <span class="ico">📈</span> Analytics
+      </div>
+
+      <div class="nav-section">System</div>
+      <div class="nav-item" onclick="showPage('settings')" data-page="settings">
+        <span class="ico">⚙️</span> Settings
+      </div>
+      <div class="nav-item" onclick="window.open('/', '_blank')">
+        <span class="ico">🌐</span> View Website
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">🚪 Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="topbar-right">
+        <div class="status-dot" title="Server online"></div>
+        <div class="topbar-time" id="topbar-time"></div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page active" id="page-dashboard">
+      <div class="stat-row" id="stat-row">
+        <div class="stat-card">
+          <div class="stat-label">Total Leads</div>
+          <div class="stat-val" id="s-total">—</div>
+          <div class="stat-sub">All time</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">New</div>
+          <div class="stat-val" id="s-new">—</div>
+          <div class="stat-sub">Awaiting contact</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="stat-label">Contacted</div>
+          <div class="stat-val" id="s-contacted">—</div>
+          <div class="stat-sub">In progress</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Converted</div>
+          <div class="stat-val" id="s-converted">—</div>
+          <div class="stat-sub">Customers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Today</div>
+          <div class="stat-val" id="s-today">—</div>
+          <div class="stat-sub">New today</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">📅 Last 7 Days</div>
+          <div class="day-chart" id="day-chart"></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px" id="day-labels"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">🏙️ Top Cities</div>
+          <div class="bar-list" id="city-chart"></div>
+        </div>
+      </div>
+
+      <!-- Recent Leads -->
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Recent Leads</div>
+          <button class="btn btn-outline" onclick="showPage('leads')">View All →</button>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Name</th><th>Phone</th><th>City</th><th>Service</th><th>Date</th><th>Status</th>
+          </tr></thead>
+          <tbody id="recent-tbody">
+            <tr><td colspan="6"><div class="empty-state"><div class="ico">📭</div><p>No leads yet</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LEADS PAGE -->
+    <div class="page" id="page-leads">
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">All Leads <span id="leads-count" style="font-weight:400;color:var(--muted);font-size:.82rem"></span></div>
+          <div class="table-actions">
+            <input type="search" class="search-input" id="search-input" placeholder="Search name, phone, city…" oninput="renderLeads()">
+            <select class="filter-select" id="filter-status" onchange="renderLeads()">
+              <option value="">All Status</option>
+              <option value="new">New</option>
+              <option value="contacted">Contacted</option>
+              <option value="converted">Converted</option>
+              <option value="lost">Lost</option>
+            </select>
+            <select class="filter-select" id="filter-city" onchange="renderLeads()">
+              <option value="">All Cities</option>
+            </select>
+            <button class="btn btn-outline" onclick="exportCSV()">⬇ Export CSV</button>
+            <button class="btn btn-primary" onclick="refreshLeads()">↻ Refresh</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr>
+            <th>#</th><th>Name</th><th>Phone</th><th>City</th><th>Service</th>
+            <th>Date & Time</th><th>Status</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="leads-tbody">
+            <tr><td colspan="8"><div class="empty-state"><div class="ico">📭</div><p>No leads yet. Submit the form on the website to see leads here.</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ANALYTICS PAGE -->
+    <div class="page" id="page-analytics">
+      <div class="stat-row" id="analytics-stat-row" style="grid-template-columns:repeat(4,1fr)">
+        <div class="stat-card green">
+          <div class="stat-label">Conversion Rate</div>
+          <div class="stat-val" id="a-conv">—</div>
+          <div class="stat-sub">Leads → Customers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Leads</div>
+          <div class="stat-val" id="a-total">—</div>
+          <div class="stat-sub">All time</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">Today's Leads</div>
+          <div class="stat-val" id="a-today">—</div>
+          <div class="stat-sub">Since midnight</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="stat-label">This Week</div>
+          <div class="stat-val" id="a-week">—</div>
+          <div class="stat-sub">Last 7 days</div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">🏙️ Leads by City</div>
+          <div class="bar-list" id="analytics-city-chart"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">🛠️ Leads by Service</div>
+          <div class="bar-list" id="analytics-service-chart"></div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">📅 Daily Trend — Last 7 Days</div>
+        <div class="day-chart" id="analytics-day-chart" style="height:120px"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px" id="analytics-day-labels"></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div class="page" id="page-settings">
+      <div class="settings-card">
+        <div class="settings-title">⚙️ System Information</div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-label">Website</div><div class="s-desc">Main website URL</div></div>
+          <span class="setting-val" id="set-url">http://localhost:8083</span>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-label">Leads Database</div><div class="s-desc">JSON file storage location</div></div>
+          <span class="setting-val">data/leads.json</span>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-label">Server Status</div><div class="s-desc">Express.js backend</div></div>
+          <span class="setting-val" style="color:#22C55E">● Online</span>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-label">Email Notifications</div><div class="s-desc">Configure in .env file</div></div>
+          <span class="setting-val" id="set-email-status">Not configured</span>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-title">📊 Performance Audit</div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-label">Sitemap</div><div class="s-desc">sitemap.xml</div></div>
+          <a href="/sitemap.xml" target="_blank" class="btn btn-outline btn-sm" style="height:30px;padding:0 12px;font-size:.78rem">View →</a>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-label">Robots.txt</div><div class="s-desc">Search engine instructions</div></div>
+          <a href="/robots.txt" target="_blank" class="btn btn-outline" style="height:30px;padding:0 12px;font-size:.78rem">View →</a>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-label">Health Check</div><div class="s-desc">Server health API</div></div>
+          <a href="/api/health" target="_blank" class="btn btn-outline" style="height:30px;padding:0 12px;font-size:.78rem">View →</a>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-label">Performance Report</div><div class="s-desc">Website performance analysis</div></div>
+          <a href="/performance-report.html" target="_blank" class="btn btn-outline" style="height:30px;padding:0 12px;font-size:.78rem">View →</a>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-title">📚 Documentation</div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-label">Deployment Guide</div><div class="s-desc">How to deploy to production</div></div>
+          <a href="/docs/deployment-guide.html" target="_blank" class="btn btn-outline" style="height:30px;padding:0 12px;font-size:.78rem">View →</a>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-label">Maintenance Guide</div><div class="s-desc">Daily/weekly maintenance tasks</div></div>
+          <a href="/docs/maintenance-guide.html" target="_blank" class="btn btn-outline" style="height:30px;padding:0 12px;font-size:.78rem">View →</a>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="s-label">Export All Leads</div><div class="s-desc">Download all leads as CSV</div></div>
+          <button class="btn btn-primary" style="height:30px;padding:0 12px;font-size:.78rem" onclick="exportCSV()">⬇ Download CSV</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">Update Lead Status</div>
+    <input type="hidden" id="edit-id">
+    <div class="modal-field">
+      <label class="modal-label">Status</label>
+      <select class="modal-select" id="edit-status">
+        <option value="new">New</option>
+        <option value="contacted">Contacted</option>
+        <option value="converted">Converted</option>
+        <option value="lost">Lost</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Notes</label>
+      <textarea class="modal-textarea" id="edit-notes" placeholder="Add notes about this lead…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+/* ── STATE ── */
+let token    = '';
+let allLeads = [];
+let stats    = {};
+
+/* ── CLOCK ── */
+function updateClock() {
+  const now = new Date();
+  document.getElementById('topbar-time').textContent =
+    now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ── LOGIN ── */
+function doLogin() {
+  const pass = document.getElementById('login-pass').value;
+  if (!pass) return;
+  // Verify against API
+  fetch('/api/admin/leads?limit=0', { headers: { 'x-admin-token': pass } })
+    .then(r => {
+      if (r.ok) {
+        token = pass;
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        localStorage.setItem('bpc_admin_token', pass);
+        loadDashboard();
+      } else {
+        const el = document.getElementById('login-error');
+        el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 3000);
+      }
+    })
+    .catch(() => {
+      // Offline fallback — accept password directly
+      const defaultPass = 'bajaj@admin2024';
+      if (pass === defaultPass) {
+        token = pass;
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        localStorage.setItem('bpc_admin_token', pass);
+        loadDashboard();
+      } else {
+        document.getElementById('login-error').style.display = 'block';
+      }
+    });
+}
+
+document.getElementById('login-pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+// Auto-login from localStorage
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('bpc_admin_token');
+  if (saved) {
+    document.getElementById('login-pass').value = saved;
+    doLogin();
+  }
+  document.getElementById('set-url').textContent = window.location.origin;
+});
+
+function doLogout() {
+  localStorage.removeItem('bpc_admin_token');
+  token = '';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-pass').value = '';
+}
+
+/* ── NAVIGATION ── */
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`page-${page}`).classList.add('active');
+  document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+  const titles = { dashboard: 'Dashboard', leads: 'All Leads', analytics: 'Analytics', settings: 'Settings' };
+  document.getElementById('page-title').textContent = titles[page] || page;
+  if (page === 'leads') renderLeads();
+  if (page === 'analytics') loadAnalytics();
+}
+
+/* ── API ── */
+async function apiFetch(url, opts = {}) {
+  opts.headers = { ...(opts.headers || {}), 'x-admin-token': token };
+  const r = await fetch(url, opts);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+/* ── LOAD DASHBOARD ── */
+async function loadDashboard() {
+  try {
+    const data = await apiFetch('/api/admin/leads');
+    allLeads = data.leads || [];
+    stats    = data.stats || {};
+    renderStats();
+    renderRecentLeads();
+    renderCityChart();
+    renderDayChart('day-chart', 'day-labels');
+    await loadAnalytics();
+  } catch (e) {
+    console.error('Load failed:', e);
+    showToast('Could not load data from server', 'error');
+  }
+}
+
+function refreshLeads() { loadDashboard(); }
+
+/* ── STATS ── */
+function renderStats() {
+  document.getElementById('s-total').textContent     = stats.total     ?? 0;
+  document.getElementById('s-new').textContent       = stats.new       ?? 0;
+  document.getElementById('s-contacted').textContent = stats.contacted  ?? 0;
+  document.getElementById('s-converted').textContent = stats.converted  ?? 0;
+  document.getElementById('s-today').textContent     = stats.today      ?? 0;
+}
+
+/* ── LEADS TABLE ── */
+function renderLeads() {
+  const q       = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const status  = document.getElementById('filter-status')?.value || '';
+  const city    = document.getElementById('filter-city')?.value   || '';
+  let filtered  = allLeads;
+  if (q)      filtered = filtered.filter(l => `${l.name} ${l.phone} ${l.city} ${l.service}`.toLowerCase().includes(q));
+  if (status) filtered = filtered.filter(l => l.status === status);
+  if (city)   filtered = filtered.filter(l => l.city === city);
+
+  // Populate city filter
+  const cities = [...new Set(allLeads.map(l => l.city).filter(Boolean))].sort();
+  const sel = document.getElementById('filter-city');
+  if (sel && sel.options.length <= 1) {
+    cities.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  }
+
+  document.getElementById('leads-count').textContent = `(${filtered.length} of ${allLeads.length})`;
+  const tbody = document.getElementById('leads-tbody');
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="ico">🔍</div><p>No leads match your search</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map((l, i) => `
+    <tr>
+      <td style="color:var(--muted);font-size:.78rem">${i + 1}</td>
+      <td><strong>${esc(l.name)}</strong></td>
+      <td><a href="tel:${esc(l.phone)}" style="color:var(--green)">${esc(l.phone)}</a></td>
+      <td>${esc(l.city)}</td>
+      <td style="font-size:.82rem">${esc(l.service)}</td>
+      <td style="font-size:.78rem;color:var(--muted)">${esc(l.date)} ${esc(l.time)}</td>
+      <td><span class="badge badge-${l.status || 'new'}">${l.status || 'new'}</span></td>
+      <td>
+        <div class="actions-cell">
+          <button class="icon-btn" title="Edit" onclick="openEdit('${l.id}')">✏️</button>
+          <button class="icon-btn" title="Call" onclick="window.open('tel:${esc(l.phone)}')">📞</button>
+          <button class="icon-btn" title="WhatsApp" onclick="window.open('https://wa.me/${l.phone?.replace(/\D/g,'')}')">💬</button>
+          <button class="icon-btn btn-danger" title="Delete" onclick="deleteLead('${l.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterByStatus(status) {
+  const el = document.getElementById('filter-status');
+  if (el) { el.value = status; renderLeads(); }
+}
+
+function renderRecentLeads() {
+  const recent = allLeads.slice(0, 8);
+  const tbody  = document.getElementById('recent-tbody');
+  if (!recent.length) return;
+  tbody.innerHTML = recent.map(l => `
+    <tr>
+      <td><strong>${esc(l.name)}</strong></td>
+      <td><a href="tel:${esc(l.phone)}" style="color:var(--green)">${esc(l.phone)}</a></td>
+      <td>${esc(l.city)}</td>
+      <td style="font-size:.82rem">${esc(l.service)}</td>
+      <td style="font-size:.78rem;color:var(--muted)">${esc(l.date)}</td>
+      <td><span class="badge badge-${l.status || 'new'}">${l.status || 'new'}</span></td>
+    </tr>
+  `).join('');
+}
+
+/* ── CHARTS ── */
+function renderCityChart() {
+  const byCityMap = {};
+  allLeads.forEach(l => { byCityMap[l.city] = (byCityMap[l.city] || 0) + 1; });
+  const sorted = Object.entries(byCityMap).sort((a,b) => b[1]-a[1]).slice(0, 6);
+  const max    = sorted[0]?.[1] || 1;
+  document.getElementById('city-chart').innerHTML = sorted.length
+    ? sorted.map(([city, count]) => `
+        <div class="bar-item">
+          <span class="bar-label">${esc(city)}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${(count/max*100).toFixed(1)}%"></div></div>
+          <span class="bar-count">${count}</span>
+        </div>`).join('')
+    : '<p style="color:var(--muted);font-size:.85rem">No data yet</p>';
+}
+
+function renderDayChart(chartId, labelsId) {
+  const now    = new Date();
+  const days   = [];
+  for (let i = 6; i >= 0; i--) {
+    const d   = new Date(now); d.setDate(d.getDate() - i);
+    const date = d.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+    const day  = d.toLocaleDateString('en', { weekday: 'short' });
+    const count = allLeads.filter(l => l.date === date).length;
+    days.push({ day, count, date });
+  }
+  const max = Math.max(...days.map(d => d.count), 1);
+  document.getElementById(chartId).innerHTML = days.map(d => `
+    <div class="day-bar-wrap">
+      <div class="day-bar-outer">
+        <div class="day-bar-inner" style="height:${Math.max(d.count/max*100,2).toFixed(1)}%" title="${d.count} leads on ${d.date}"></div>
+      </div>
+    </div>`).join('');
+  if (document.getElementById(labelsId)) {
+    document.getElementById(labelsId).innerHTML = days.map(d =>
+      `<span class="day-label">${d.day}</span>`).join('');
+  }
+}
+
+/* ── ANALYTICS ── */
+async function loadAnalytics() {
+  try {
+    const data = await apiFetch('/api/admin/stats');
+    const { summary, byCity, byService, last7 } = data;
+
+    document.getElementById('a-conv').textContent  = summary.conversionRate + '%';
+    document.getElementById('a-total').textContent = summary.total;
+    document.getElementById('a-today').textContent = summary.today;
+    document.getElementById('a-week').textContent  = last7.reduce((s,d) => s + d.count, 0);
+
+    // City chart
+    const maxC = byCity[0]?.count || 1;
+    document.getElementById('analytics-city-chart').innerHTML = byCity.slice(0,8).map(({ city, count }) => `
+      <div class="bar-item">
+        <span class="bar-label">${esc(city)}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${(count/maxC*100).toFixed(1)}%"></div></div>
+        <span class="bar-count">${count}</span>
+      </div>`).join('') || '<p style="color:var(--muted);font-size:.85rem">No data yet</p>';
+
+    // Service chart
+    const maxS = byService[0]?.count || 1;
+    document.getElementById('analytics-service-chart').innerHTML = byService.slice(0,8).map(({ service, count }) => `
+      <div class="bar-item">
+        <span class="bar-label" title="${esc(service)}">${esc(service.length > 20 ? service.slice(0,18)+'…' : service)}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${(count/maxS*100).toFixed(1)}%"></div></div>
+        <span class="bar-count">${count}</span>
+      </div>`).join('') || '<p style="color:var(--muted);font-size:.85rem">No data yet</p>';
+
+    // Day chart
+    const max7 = Math.max(...last7.map(d => d.count), 1);
+    document.getElementById('analytics-day-chart').innerHTML = last7.map(d => `
+      <div class="day-bar-wrap">
+        <div style="text-align:center;font-size:.7rem;color:var(--muted);margin-bottom:4px">${d.count || ''}</div>
+        <div class="day-bar-outer">
+          <div class="day-bar-inner" style="height:${Math.max(d.count/max7*100,2).toFixed(1)}%"></div>
+        </div>
+      </div>`).join('');
+    document.getElementById('analytics-day-labels').innerHTML = last7.map(d => {
+      const dt = new Date(d.date.split('/').reverse().join('-'));
+      return `<span class="day-label">${isNaN(dt) ? d.date : dt.toLocaleDateString('en',{weekday:'short'})}</span>`;
+    }).join('');
+  } catch (e) {
+    console.error('Analytics load failed:', e);
+  }
+}
+
+/* ── EDIT MODAL ── */
+function openEdit(id) {
+  const lead = allLeads.find(l => l.id === id);
+  if (!lead) return;
+  document.getElementById('edit-id').value       = id;
+  document.getElementById('edit-status').value   = lead.status || 'new';
+  document.getElementById('edit-notes').value    = lead.notes  || '';
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+}
+
+async function saveEdit() {
+  const id     = document.getElementById('edit-id').value;
+  const status = document.getElementById('edit-status').value;
+  const notes  = document.getElementById('edit-notes').value;
+  try {
+    await apiFetch(`/api/admin/leads/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, notes }),
+    });
+    closeModal();
+    await loadDashboard();
+    renderLeads();
+    showToast('Lead updated successfully', 'success');
+  } catch (e) {
+    showToast('Failed to update lead', 'error');
+  }
+}
+
+async function deleteLead(id) {
+  if (!confirm('Delete this lead? This cannot be undone.')) return;
+  try {
+    await apiFetch(`/api/admin/leads/${id}`, { method: 'DELETE' });
+    await loadDashboard();
+    renderLeads();
+    showToast('Lead deleted', 'success');
+  } catch (e) {
+    showToast('Failed to delete lead', 'error');
+  }
+}
+
+/* ── EXPORT ── */
+function exportCSV() {
+  window.open(`/api/admin/export?token=${encodeURIComponent(token)}`, '_blank');
+}
+
+/* ── TOAST ── */
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = 'show ' + type;
+  setTimeout(() => t.className = '', 3500);
+}
+
+/* ── HELPERS ── */
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── CLOSE MODAL ON OVERLAY CLICK ── */
+document.getElementById('edit-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('edit-modal')) closeModal();
+});
+
+/* ── AUTO REFRESH EVERY 60s ── */
+setInterval(() => {
+  if (token) loadDashboard();
+}, 60000);
+</script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deployment Guide — Bajaj Pest Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#F5F5F5;color:#1A2332;line-height:1.7}
+    .topbar{background:#1A2332;padding:16px 24px;color:#fff;display:flex;align-items:center;justify-content:space-between}
+    .topbar a{color:rgba(255,255,255,.6);font-size:.85rem;text-decoration:none}
+    .topbar a:hover{color:#fff}
+    .container{max-width:860px;margin:0 auto;padding:40px 24px}
+    h1{font-size:1.75rem;font-weight:700;margin-bottom:8px}
+    .subtitle{color:#666;margin-bottom:40px}
+    h2{font-size:1.2rem;font-weight:700;margin:32px 0 16px;color:#1A2332;display:flex;align-items:center;gap:8px}
+    h3{font-size:1rem;font-weight:600;margin:20px 0 10px;color:#1A2332}
+    p{margin-bottom:12px;font-size:.9rem;color:#444}
+    code{background:#1A2332;color:#4CAF7A;padding:2px 8px;border-radius:4px;font-family:monospace;font-size:.85rem}
+    pre{background:#1A2332;color:#e8e8e8;padding:20px;border-radius:8px;overflow-x:auto;margin:12px 0;font-size:.85rem;line-height:1.6}
+    pre .cmd{color:#4CAF7A}
+    pre .comment{color:rgba(255,255,255,.35)}
+    .card{background:#fff;border-radius:12px;border:1px solid #E8E8E8;padding:24px;margin-bottom:20px}
+    .card-title{font-size:1rem;font-weight:700;color:#1A2332;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .step{display:flex;gap:14px;margin-bottom:16px}
+    .step-num{width:28px;height:28px;border-radius:50%;background:#1B7D4B;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0}
+    .step-body{flex:1}
+    .step-title{font-weight:600;font-size:.9rem;margin-bottom:4px}
+    .step-desc{font-size:.85rem;color:#555}
+    .badge{padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:600}
+    .free{background:#DCFCE7;color:#166534}
+    .paid{background:#FEF3C7;color:#92400E}
+    .rec{background:#DBEAFE;color:#1D4ED8}
+    .alert{background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:14px 16px;margin:12px 0;font-size:.85rem}
+    .alert strong{color:#92400E}
+    ul{padding-left:20px;font-size:.9rem;color:#444;margin-bottom:12px}
+    ul li{margin-bottom:6px}
+    table{width:100%;border-collapse:collapse;font-size:.875rem;margin:12px 0}
+    th{background:#F5F5F5;padding:10px 14px;text-align:left;font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#666;border-bottom:1px solid #E8E8E8}
+    td{padding:10px 14px;border-bottom:1px solid #E8E8E8;color:#444}
+    .env-key{font-family:monospace;color:#1B7D4B;font-weight:600}
+  </style>
+</head>
+<body>
+<div class="topbar">
+  <strong>🛡️ Bajaj Pest Control — Deployment Guide</strong>
+  <a href="../admin/">← Admin Dashboard</a>
+</div>
+<div class="container">
+  <h1>🚀 Deployment Guide</h1>
+  <p class="subtitle">Complete guide to deploy Bajaj Pest Control website to production with SSL, custom domain, and monitoring.</p>
+
+  <!-- Option 1: Vercel -->
+  <div class="card">
+    <div class="card-title">☁️ Option 1: Vercel (Recommended) <span class="badge free">Free</span> <span class="badge rec">Recommended</span></div>
+    <p>Vercel is the fastest way to deploy. Auto SSL, global CDN, and instant deploys from Git.</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Install Vercel CLI</div>
+        <pre><span class="cmd">npm install -g vercel</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Create vercel.json (already done)</div>
+        <pre><span class="comment">// This configures routing for the Express server</span>
+{
+  "version": 2,
+  "builds": [{"src": "server.js", "use": "@vercel/node"}],
+  "routes": [{"src": "/(.*)", "dest": "/server.js"}]
+}</pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Deploy to Vercel</div>
+        <pre><span class="cmd">cd C:\Users\Dell\Desktop\bajaj-final</span>
+<span class="cmd">vercel --prod</span>
+<span class="comment"># Follow prompts: create account, link project</span>
+<span class="comment"># Your site will be live at: https://bajaj-final.vercel.app</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Add Environment Variables in Vercel Dashboard</div>
+        <p class="step-desc">Go to: vercel.com → Project → Settings → Environment Variables</p>
+        <pre><span class="comment"># Add each variable from your .env file:</span>
+ADMIN_PASSWORD = bajaj@admin2024
+SMTP_HOST      = smtp.gmail.com
+SMTP_USER      = your-email@gmail.com
+SMTP_PASS      = your-app-password
+NOTIFY_EMAIL   = bajajpeastcontol1@gmail.com</pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Add Custom Domain</div>
+        <pre><span class="cmd">vercel domains add bajajpestcontrol.in</span>
+<span class="comment"># Then point your domain DNS:</span>
+<span class="comment"># A Record → 76.76.21.21</span>
+<span class="comment"># CNAME www → cname.vercel-dns.com</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option 2: Netlify -->
+  <div class="card">
+    <div class="card-title">🌐 Option 2: Netlify <span class="badge free">Free</span></div>
+    <p>Good alternative to Vercel. Also offers auto SSL and CDN.</p>
+    <pre><span class="comment"># Install Netlify CLI</span>
+<span class="cmd">npm install -g netlify-cli</span>
+
+<span class="comment"># Build and deploy</span>
+<span class="cmd">netlify init</span>
+<span class="cmd">netlify deploy --prod</span>
+
+<span class="comment"># Add custom domain:</span>
+<span class="comment"># Go to Site settings → Domain management → Add domain</span></pre>
+  </div>
+
+  <!-- Option 3: VPS -->
+  <div class="card">
+    <div class="card-title">🖥️ Option 3: VPS Server (DigitalOcean/AWS) <span class="badge paid">Paid</span></div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Upload files to server</div>
+        <pre><span class="cmd">scp -r C:\Users\Dell\Desktop\bajaj-final root@YOUR_SERVER_IP:/var/www/bajaj/</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Install dependencies & run with PM2</div>
+        <pre><span class="cmd">ssh root@YOUR_SERVER_IP</span>
+<span class="cmd">cd /var/www/bajaj && npm install</span>
+<span class="cmd">npm install -g pm2</span>
+<span class="cmd">pm2 start server.js --name bajaj-ppc</span>
+<span class="cmd">pm2 startup && pm2 save</span>
+<span class="comment"># App will auto-restart on server reboot</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Configure Nginx reverse proxy + SSL</div>
+        <pre><span class="comment"># Install Nginx + Certbot</span>
+<span class="cmd">sudo apt install nginx certbot python3-certbot-nginx</span>
+
+<span class="comment"># Create nginx config at /etc/nginx/sites-available/bajaj</span>
+server {
+    server_name bajajpestcontrol.in www.bajajpestcontrol.in;
+    location / {
+        proxy_pass http://localhost:8083;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+    }
+}
+
+<span class="comment"># Enable SSL (free Let's Encrypt)</span>
+<span class="cmd">sudo certbot --nginx -d bajajpestcontrol.in -d www.bajajpestcontrol.in</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Environment Variables -->
+  <div class="card">
+    <div class="card-title">🔑 Environment Variables Reference</div>
+    <table>
+      <thead><tr><th>Variable</th><th>Description</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td class="env-key">PORT</td><td>Server port</td><td>8083</td></tr>
+        <tr><td class="env-key">ADMIN_PASSWORD</td><td>Admin dashboard password</td><td>bajaj@admin2024</td></tr>
+        <tr><td class="env-key">SMTP_HOST</td><td>Email server host</td><td>smtp.gmail.com</td></tr>
+        <tr><td class="env-key">SMTP_PORT</td><td>Email server port</td><td>587</td></tr>
+        <tr><td class="env-key">SMTP_USER</td><td>Gmail address</td><td>you@gmail.com</td></tr>
+        <tr><td class="env-key">SMTP_PASS</td><td>Gmail App Password (not regular password)</td><td>xxxx xxxx xxxx xxxx</td></tr>
+        <tr><td class="env-key">NOTIFY_EMAIL</td><td>Where to send lead alerts</td><td>bajajpeastcontol1@gmail.com</td></tr>
+        <tr><td class="env-key">GA4_MEASUREMENT_ID</td><td>Google Analytics 4 ID</td><td>G-XXXXXXXXXX</td></tr>
+        <tr><td class="env-key">WEBHOOK_URL</td><td>Optional CRM/Zapier webhook</td><td>https://hooks.zapier.com/...</td></tr>
+      </tbody>
+    </table>
+    <div class="alert"><strong>⚠️ Gmail Setup:</strong> Use an App Password (not your Gmail login). Go to: Google Account → Security → 2-Step Verification → App Passwords → Generate for "Mail".</div>
+  </div>
+
+  <!-- Post-deployment checklist -->
+  <div class="card">
+    <div class="card-title">✅ Post-Deployment Checklist</div>
+    <ul>
+      <li>☐ Website loads at custom domain with HTTPS (padlock icon)</li>
+      <li>☐ Submit test form — verify lead appears in <a href="../admin/">Admin Dashboard</a></li>
+      <li>☐ Submit test form — verify email notification received</li>
+      <li>☐ Test WhatsApp FAB button</li>
+      <li>☐ Test Call FAB button</li>
+      <li>☐ Replace GA4_MEASUREMENT_ID in index.html and analytics.js</li>
+      <li>☐ Verify sitemap at: yourdomain.com/sitemap.xml</li>
+      <li>☐ Verify robots.txt at: yourdomain.com/robots.txt</li>
+      <li>☐ Submit sitemap to Google Search Console</li>
+      <li>☐ Test on mobile (iPhone + Android)</li>
+      <li>☐ Run Google Lighthouse audit (score should be 90+)</li>
+      <li>☐ Set up uptime monitoring (UptimeRobot — free)</li>
+      <li>☐ Update canonical URL in index.html to real domain</li>
+      <li>☐ Create og-image.jpg (1200×630px) for social sharing</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>
