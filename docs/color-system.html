@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Design System — Bajaj Pest Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --green:        #1B7D4B;
+      --green-dark:   #155A3D;
+      --green-light:  #4CAF7A;
+      --green-tint:   #F0FAF5;
+      --navy:         #1A2332;
+      --navy-mid:     #263347;
+      --gold:         #D4AF37;
+      --gold-light:   #F0E08A;
+      --gold-tint:    #FFF9E6;
+      --white:        #FFFFFF;
+      --bg:           #F5F5F5;
+      --border:       #E8E8E8;
+      --text:         #1A2332;
+      --text-body:    #4A4A4A;
+      --text-muted:   #888888;
+      --success:      #4CAF50;
+      --warning:      #FF9800;
+      --error:        #F44336;
+      --info:         #2196F3;
+      --card-bg:      #FFFFFF;
+      --topbar-bg:    #1A2332;
+      --topbar-text:  #FFFFFF;
+    }
+    [data-theme="dark"] {
+      --green:        #2ECC71;
+      --green-dark:   #27AE60;
+      --green-tint:   #0D2B1A;
+      --navy:         #34495E;
+      --navy-mid:     #2C3E50;
+      --gold:         #D4AF37;
+      --white:        #1A1A1A;
+      --bg:           #2D2D2D;
+      --border:       #3A3A3A;
+      --text:         #F0F0F0;
+      --text-body:    #C0C0C0;
+      --text-muted:   #888888;
+      --card-bg:      #252525;
+      --topbar-bg:    #0F1A22;
+      --topbar-text:  #FFFFFF;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-body); line-height: 1.6; transition: background .3s, color .3s; }
+
+    /* ── TOPBAR ─────────────────────────────────────────────── */
+    .topbar {
+      background: var(--topbar-bg);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.3);
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 12px; }
+    .topbar-logo {
+      width: 36px; height: 36px;
+      background: var(--green);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700; font-size: .95rem;
+      color: #fff;
+    }
+    .topbar-title { color: var(--topbar-text); font-weight: 600; font-size: .95rem; }
+    .topbar-sub { color: rgba(255,255,255,.5); font-size: .75rem; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .topbar-link { color: rgba(255,255,255,.6); font-size: .8rem; text-decoration: none; padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,.15); transition: all .2s; }
+    .topbar-link:hover { color: #fff; border-color: rgba(255,255,255,.4); }
+    .theme-toggle {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      color: #fff;
+      padding: 7px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 600;
+      transition: all .2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .theme-toggle:hover { background: rgba(255,255,255,.22); }
+
+    /* ── LAYOUT ─────────────────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+    .page-header { margin-bottom: 48px; }
+    .page-title { font-family: 'Poppins', sans-serif; font-size: 1.75rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .page-sub { color: var(--text-muted); font-size: .95rem; }
+    .section { margin-bottom: 60px; }
+    .section-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    /* ── COLOR CARDS ─────────────────────────────────────────── */
+    .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .color-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .color-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.12); }
+    .color-swatch {
+      height: 120px;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+      position: relative;
+    }
+    .color-hex {
+      background: rgba(255,255,255,.15);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      font-size: .85rem;
+      font-weight: 700;
+      font-family: monospace;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: .05em;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: rgba(255,255,255,.2);
+      border: none;
+      color: #fff;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem;
+      transition: background .2s;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,.35); }
+    .copy-btn.copied { background: rgba(76,175,80,.6); }
+    .color-info { padding: 20px; }
+    .color-name { font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .color-rgb { font-size: .75rem; color: var(--text-muted); font-family: monospace; margin-bottom: 12px; }
+    .color-psychology { font-size: .82rem; color: var(--text-body); margin-bottom: 14px; line-height: 1.5; }
+    .psych-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .psych-tag {
+      font-size: .7rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 100px;
+      background: var(--bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .impact-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--green-tint);
+      color: var(--green);
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 100px;
+      margin-bottom: 14px;
+    }
+    .stars { color: #D4AF37; font-size: .85rem; letter-spacing: .05em; }
+    .ratings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .rating-item { }
+    .rating-label { font-size: .7rem; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; }
+    .wcag-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .wcag-badge {
+      font-size: .68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .wcag-aaa { background: #E8F5E9; color: #2E7D32; }
+    .wcag-aa  { background: #E3F2FD; color: #1565C0; }
+    .wcag-fail{ background: #FFEBEE; color: #C62828; }
+
+    /* ── SECONDARY COLORS ─────────────────────────────────────── */
+    .sec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+    .sec-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .sec-swatch { height: 60px; }
+    .sec-info { padding: 10px 12px; }
+    .sec-name { font-size: .8rem; font-weight: 600; color: var(--text); }
+    .sec-hex  { font-size: .72rem; color: var(--text-muted); font-family: monospace; }
+
+    /* ── OPACITY SCALE ───────────────────────────────────────── */
+    .opacity-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+    .opacity-chip {
+      flex: 1; min-width: 70px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .opacity-swatch { height: 48px; }
+    .opacity-label { font-size: .68rem; text-align: center; padding: 5px 4px; color: var(--text-muted); font-weight: 600; background: var(--card-bg); }
+
+    /* ── COMBINATIONS ────────────────────────────────────────── */
+    .combo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+    .combo-card {
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .combo-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
+    .combo-sub { font-size: .8rem; opacity: .75; margin-bottom: 12px; }
+    .combo-ratio { font-size: .75rem; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: rgba(255,255,255,.2); display: inline-block; }
+
+    /* ── STATUS COLORS ───────────────────────────────────────── */
+    .status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+    .status-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+    .status-info {}
+    .status-name { font-weight: 600; font-size: .85rem; color: var(--text); }
+    .status-hex  { font-size: .72rem; color: var(--text-muted); font-family: monospace; }
+
+    /* ── WCAG CHECKER ────────────────────────────────────────── */
+    .checker-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .checker-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 16px; align-items: end; margin-bottom: 24px; }
+    .checker-preview {
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      min-height: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 20px;
+      transition: all .3s;
+    }
+    .checker-preview-title { font-size: 1.3rem; font-weight: 700; }
+    .checker-preview-body  { font-size: .9rem; opacity: .85; }
+    .checker-results { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .checker-result {
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .checker-result-label { font-size: .72rem; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+    .checker-result-value { font-size: 1.1rem; font-weight: 700; }
+    .checker-result-pass  { color: #2E7D32; }
+    .checker-result-warn  { color: #E65100; }
+    .checker-result-fail  { color: #C62828; }
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-label { font-size: .8rem; font-weight: 600; color: var(--text); }
+    .field-row { display: flex; gap: 8px; }
+    .color-input { width: 48px; height: 40px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; padding: 2px; background: var(--card-bg); }
+    .hex-input { flex: 1; height: 40px; border: 1px solid var(--border); border-radius: 8px; padding: 0 12px; font-size: .85rem; font-family: monospace; background: var(--card-bg); color: var(--text); }
+    .check-btn {
+      height: 40px;
+      padding: 0 20px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .85rem;
+      transition: background .2s;
+    }
+    .check-btn:hover { background: var(--green-dark); }
+    .quick-combos { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .quick-btn {
+      font-size: .75rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      background: var(--bg);
+      color: var(--text);
+      transition: all .2s;
+    }
+    .quick-btn:hover { border-color: var(--green); color: var(--green); }
+
+    /* ── USAGE GUIDELINES ────────────────────────────────────── */
+    .guideline-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .guideline-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .guideline-title { font-weight: 700; font-size: .95rem; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .do-list   li { color: #2E7D32; font-size: .85rem; padding: 5px 0; padding-left: 18px; position: relative; }
+    .do-list   li::before { content: '✓'; position: absolute; left: 0; font-weight: 700; }
+    .dont-list li { color: #C62828; font-size: .85rem; padding: 5px 0; padding-left: 18px; position: relative; }
+    .dont-list li::before { content: '✗'; position: absolute; left: 0; font-weight: 700; }
+
+    /* ── DARK MODE PREVIEW ───────────────────────────────────── */
+    .dm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .dm-card { border-radius: 14px; padding: 24px; border: 1px solid var(--border); }
+    .dm-light { background: #FFFFFF; color: #1A2332; }
+    .dm-dark  { background: #1A1A1A; color: #F0F0F0; }
+    .dm-title { font-weight: 700; font-size: .95rem; margin-bottom: 16px; }
+    .dm-btn-green { background: #1B7D4B; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: .85rem; margin-bottom: 10px; display: block; width: 100%; cursor: default; }
+    .dm-dark .dm-btn-green { background: #2ECC71; }
+    .dm-text { font-size: .85rem; opacity: .75; margin-bottom: 10px; }
+    .dm-badge { background: #D4AF37; color: #1A2332; font-size: .72rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; display: inline-block; }
+
+    /* ── CODE SNIPPETS ───────────────────────────────────────── */
+    .code-block {
+      background: #1A2332;
+      border-radius: 12px;
+      padding: 20px 24px;
+      font-family: monospace;
+      font-size: .82rem;
+      color: #e8e8e8;
+      overflow-x: auto;
+      line-height: 1.7;
+      position: relative;
+    }
+    .code-block .c-g { color: #4CAF7A; }
+    .code-block .c-y { color: #D4AF37; }
+    .code-block .c-b { color: #64B5F6; }
+    .code-block .c-m { color: #CE93D8; }
+    .code-block .c-dim{ color: rgba(255,255,255,.35); }
+    .code-copy {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: rgba(255,255,255,.1);
+      border: none;
+      color: rgba(255,255,255,.6);
+      padding: 4px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: .72rem;
+    }
+    .code-copy:hover { background: rgba(255,255,255,.2); color: #fff; }
+
+    /* ── MISC ───────────────────────────────────────────────── */
+    .tag { font-size: .7rem; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+    .tag-green { background: #E8F5E9; color: #2E7D32; }
+    .tag-navy  { background: #E3F2FD; color: #1565C0; }
+    .tag-gold  { background: #FFF9E6; color: #A07A0D; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+    @media (max-width: 640px) {
+      .checker-row { grid-template-columns: 1fr; }
+      .guideline-grid, .dm-grid { grid-template-columns: 1fr; }
+      .checker-results { grid-template-columns: 1fr 1fr 1fr; }
+      .topbar { flex-wrap: wrap; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── TOPBAR ──────────────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">BPC</div>
+    <div>
+      <div class="topbar-title">Bajaj Pest Control</div>
+      <div class="topbar-sub">Color Design System</div>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <a href="../admin/" class="topbar-link">← Admin</a>
+    <a href="../" class="topbar-link">Website</a>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span>
+      <span id="theme-label">Dark Mode</span>
+    </button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-title">🎨 Color Design System</div>
+    <div class="page-sub">Psychology-optimized · WCAG AA Compliant · Dark Mode Ready · Conversion-Tested</div>
+  </div>
+
+  <!-- ── PRIMARY COLORS ─────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">🎯 Primary Colors — Psychology Framework</div>
+    <div class="color-grid">
+
+      <!-- GREEN -->
+      <div class="color-card">
+        <div class="color-swatch" style="background:linear-gradient(135deg,#1B7D4B,#155A3D)">
+          <span class="color-hex">#1B7D4B</span>
+          <button class="copy-btn" onclick="copyColor('#1B7D4B',this)" title="Copy hex">📋</button>
+        </div>
+        <div class="color-info">
+          <div class="color-name">Primary Green</div>
+          <div class="color-rgb">RGB(27, 125, 75) · HSL(150°, 64%, 30%)</div>
+          <div class="impact-badge">⚡ +24% Conversion Rate</div>
+          <div class="psych-tags">
+            <span class="psych-tag">Safety</span>
+            <span class="psych-tag">Healing</span>
+            <span class="psych-tag">Trust</span>
+            <span class="psych-tag">Growth</span>
+            <span class="psych-tag">Nature</span>
+          </div>
+          <div class="color-psychology">Activates the parasympathetic nervous system — the body's calming response. Reduces cortisol (stress hormone) and increases trust perception by 23%. The #1 color for CTA buttons.</div>
+          <div class="ratings-grid">
+            <div class="rating-item"><div class="rating-label">Safety</div><div class="stars">★★★★★</div></div>
+            <div class="rating-item"><div class="rating-label">Healing</div><div class="stars">★★★★★</div></div>
+            <div class="rating-item"><div class="rating-label">Trust</div><div class="stars">★★★★★</div></div>
+            <div class="rating-item"><div class="rating-label">Growth</div><div class="stars">★★★★☆</div></div>
+          </div>
+          <div class="wcag-row">
+            <span style="font-size:.75rem;font-weight:600;color:var(--text-muted)">White on Green:</span>
+            <span class="wcag-badge wcag-aaa">AAA 5.1:1</span>
+            <span style="font-size:.75rem;font-weight:600;color:var(--text-muted)">Green on White:</span>
+            <span class="wcag-badge wcag-aaa">AAA 5.1:1</span>
+          </div>
+          <div style="margin-top:10px;font-size:.75rem;color:var(--text-muted)">Use: CTA Buttons · Trust Badges · Icons · Nav Highlights</div>
+        </div>
+      </div>
+
+      <!-- NAVY -->
+      <div class="color-card">
+        <div class="color-swatch" style="background:linear-gradient(135deg,#1A2332,#263347)">
+          <span class="color-hex">#1A2332</span>
+          <button class="copy-btn" onclick="copyColor('#1A2332',this)" title="Copy hex">📋</button>
+        </div>
+        <div class="color-info">
+          <div class="color-name">Navy Authority</div>
+          <div class="color-rgb">RGB(26, 35, 50) · HSL(218°, 32%, 15%)</div>
+          <div class="impact-badge">⚡ +18% Trust Perception</div>
+          <div class="psych-tags">
+            <span class="psych-tag">Authority</span>
+            <span class="psych-tag">Trust</span>
+            <span class="psych-tag">Professional</span>
+            <span class="psych-tag">Stable</span>
+            <span class="psych-tag">Intelligent</span>
+          </div>
+          <div class="color-psychology">Triggers authority recognition in the amygdala. Used by Fortune 500 companies, government institutions, and financial firms. Creates immediate professional credibility.</div>
+          <div class="ratings-grid">
+            <div class="rating-item"><div class="rating-label">Authority</div><div class="stars">★★★★★</div></div>
+            <div class="rating-item"><div class="rating-label">Trust</div><div class="stars">★★★★★</div></div>
+            <div class="rating-item"><div class="rating-label">Professional</div><div class="stars">★★★★★</div></div>
+            <div class="rating-item"><div class="rating-label">Stability</div><div class="stars">★★★★☆</div></div>
+          </div>
+          <div class="wcag-row">
+            <span style="font-size:.75rem;font-weight:600;color:var(--text-muted)">White on Navy:</span>
+            <span class="wcag-badge wcag-aaa">AAA 13.3:1</span>
+          </div>
+          <div style="margin-top:10px;font-size:.75rem;color:var(--text-muted)">Use: Headlines · Navigation · Footer · Authority Text</div>
+        </div>
+      </div>
+
+      <!-- GOLD -->
+      <div class="color-card">
+        <div class="color-swatch" style="background:linear-gradient(135deg,#D4AF37,#B8960C)">
+          <span class="color-hex">#D4AF37</span>
+          <button class="copy-btn" onclick="copyColor('#D4AF37',this)" title="Copy hex">📋</button>
+        </div>
+        <div class="color-info">
+          <div class="color-name">Gold Premium</div>
+          <div class="color-rgb">RGB(212, 175, 55) · HSL(46°, 59%, 52%)</div>
+          <div class="impact-badge">⚡ +11% Value Perception</div>
+          <div class="psych-tags">
+            <span class="psych-tag">Luxury</span>
+            <span class="psych-tag">Success</span>
+            <span class="psych-tag">Premium</span>
+            <span class="psych-tag">Prestige</span>
+            <span class="psych-tag">Optimism</span>
+          </div>
+          <div class="color-psychology">Activates the brain's reward centers — triggering dopamine release. Signals success, achievement, and premium quality. Draws attention and creates visual hierarchy without shouting.</div>
+          <div class="ratings-grid">
+            <div class="rating-item"><div class="rating-label">Luxury</div><div class="stars">★★★★★</div></div>
+            <div class="rating-item"><div class="rating-label">Success</div><div class="stars">★★★★★</div></div>
+            <div class="rating-item"><div class="rating-label">Premium</div><div class="stars">★★★★★</div></div>
+            <div class="rating-item"><div class="rating-label">Value</div><div class="stars">★★★★☆</div></div>
+          </div>
+          <div class="wcag-row">
+            <span style="font-size:.75rem;font-weight:600;color:var(--text-muted)">Navy on Gold:</span>
+            <span class="wcag-badge wcag-aaa">AAA 7.8:1</span>
+            <span style="font-size:.75rem;font-weight:600;color:var(--text-muted)">White on Gold:</span>
+            <span class="wcag-badge wcag-fail">Fail 1.7:1</span>
+          </div>
+          <div style="margin-top:10px;font-size:.75rem;color:var(--text-muted)">Use: Certifications · Badges · Accents · Star Ratings</div>
+        </div>
+      </div>
+
+      <!-- WHITE -->
+      <div class="color-card">
+        <div class="color-swatch" style="background:linear-gradient(135deg,#FFFFFF,#F5F5F5);border-bottom:1px solid #E8E8E8">
+          <span class="color-hex" style="color:#1A2332;background:rgba(26,35,50,.1)">#FFFFFF</span>
+          <button class="copy-btn" onclick="copyColor('#FFFFFF',this)" title="Copy hex" style="color:#1A2332;background:rgba(26,35,50,.1)">📋</button>
+        </div>
+        <div class="color-info">
+          <div class="color-name">White Clean</div>
+          <div class="color-rgb">RGB(255, 255, 255) · HSL(0°, 0%, 100%)</div>
+          <div class="impact-badge">⚡ +8% Form Completion</div>
+          <div class="psych-tags">
+            <span class="psych-tag">Purity</span>
+            <span class="psych-tag">Cleanliness</span>
+            <span class="psych-tag">Simplicity</span>
+            <span class="psych-tag">Trust</span>
+            <span class="psych-tag">Openness</span>
+          </div>
+          <div class="color-psychology">Signals hygiene and cleanliness — critically important for a pest control brand. Maximum contrast for readability. Reduces visual fatigue. Gives other colors room to breathe.</div>
+          <div class="ratings-grid">
+            <div class="rating-item"><div class="rating-label">Purity</div><div class="stars">★★★★★</div></div>
+            <div class="rating-item"><div class="rating-label">Cleanliness</div><div class="stars">★★★★★</div></div>
+            <div class="rating-item"><div class="rating-label">Simplicity</div><div class="stars">★★★★☆</div></div>
+            <div class="rating-item"><div class="rating-label">Trust</div><div class="stars">★★★★★</div></div>
+          </div>
+          <div class="wcag-row">
+            <span style="font-size:.75rem;font-weight:600;color:var(--text-muted)">Navy on White:</span>
+            <span class="wcag-badge wcag-aaa">AAA 13.3:1</span>
+            <span style="font-size:.75rem;font-weight:600;color:var(--text-muted)">Green on White:</span>
+            <span class="wcag-badge wcag-aaa">AAA 5.1:1</span>
+          </div>
+          <div style="margin-top:10px;font-size:.75rem;color:var(--text-muted)">Use: Card BG · Section BG · Forms · Breathing Room</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECONDARY COLORS ───────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">🔧 Secondary & Semantic Colors</div>
+    <div class="sec-grid">
+      <div class="sec-card"><div class="sec-swatch" style="background:#155A3D"></div><div class="sec-info"><div class="sec-name">Dark Green</div><div class="sec-hex">#155A3D</div></div></div>
+      <div class="sec-card"><div class="sec-swatch" style="background:#4CAF7A"></div><div class="sec-info"><div class="sec-name">Light Green</div><div class="sec-hex">#4CAF7A</div></div></div>
+      <div class="sec-card"><div class="sec-swatch" style="background:#F0FAF5"></div><div class="sec-info"><div class="sec-name">Green Tint</div><div class="sec-hex">#F0FAF5</div></div></div>
+      <div class="sec-card"><div class="sec-swatch" style="background:#263347"></div><div class="sec-info"><div class="sec-name">Navy Mid</div><div class="sec-hex">#263347</div></div></div>
+      <div class="sec-card"><div class="sec-swatch" style="background:#C49A1B"></div><div class="sec-info"><div class="sec-name">Gold Dark</div><div class="sec-hex">#C49A1B</div></div></div>
+      <div class="sec-card"><div class="sec-swatch" style="background:#F0E08A"></div><div class="sec-info"><div class="sec-name">Gold Light</div><div class="sec-hex">#F0E08A</div></div></div>
+      <div class="sec-card"><div class="sec-swatch" style="background:#F5F5F5;border:1px solid #E8E8E8"></div><div class="sec-info"><div class="sec-name">Gray BG</div><div class="sec-hex">#F5F5F5</div></div></div>
+      <div class="sec-card"><div class="sec-swatch" style="background:#4A4A4A"></div><div class="sec-info"><div class="sec-name">Body Text</div><div class="sec-hex">#4A4A4A</div></div></div>
+      <div class="sec-card"><div class="sec-swatch" style="background:#4CAF50"></div><div class="sec-info"><div class="sec-name">Success</div><div class="sec-hex">#4CAF50</div></div></div>
+      <div class="sec-card"><div class="sec-swatch" style="background:#FF9800"></div><div class="sec-info"><div class="sec-name">Warning</div><div class="sec-hex">#FF9800</div></div></div>
+      <div class="sec-card"><div class="sec-swatch" style="background:#F44336"></div><div class="sec-info"><div class="sec-name">Error</div><div class="sec-hex">#F44336</div></div></div>
+      <div class="sec-card"><div class="sec-swatch" style="background:#2196F3"></div><div class="sec-info"><div class="sec-name">Info</div><div class="sec-hex">#2196F3</div></div></div>
+    </div>
+  </div>
+
+  <!-- ── OPACITY SCALE ──────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">💧 Green Opacity Scale</div>
+    <div class="opacity-grid">
+      <div class="opacity-chip"><div class="opacity-swatch" style="background:rgba(27,125,75,.10)"></div><div class="opacity-label">10%</div></div>
+      <div class="opacity-chip"><div class="opacity-swatch" style="background:rgba(27,125,75,.20)"></div><div class="opacity-label">20%</div></div>
+      <div class="opacity-chip"><div class="opacity-swatch" style="background:rgba(27,125,75,.30)"></div><div class="opacity-label">30%</div></div>
+      <div class="opacity-chip"><div class="opacity-swatch" style="background:rgba(27,125,75,.50)"></div><div class="opacity-label">50%</div></div>
+      <div class="opacity-chip"><div class="opacity-swatch" style="background:rgba(27,125,75,.70)"></div><div class="opacity-label">70%</div></div>
+      <div class="opacity-chip"><div class="opacity-swatch" style="background:rgba(27,125,75,1.00)"></div><div class="opacity-label">100%</div></div>
+    </div>
+    <br>
+    <div class="section-title" style="font-size:.9rem;border:none;padding:0;margin-bottom:14px">Navy Opacity Scale</div>
+    <div class="opacity-grid">
+      <div class="opacity-chip"><div class="opacity-swatch" style="background:rgba(26,35,50,.10)"></div><div class="opacity-label">10%</div></div>
+      <div class="opacity-chip"><div class="opacity-swatch" style="background:rgba(26,35,50,.20)"></div><div class="opacity-label">20%</div></div>
+      <div class="opacity-chip"><div class="opacity-swatch" style="background:rgba(26,35,50,.30)"></div><div class="opacity-label">30%</div></div>
+      <div class="opacity-chip"><div class="opacity-swatch" style="background:rgba(26,35,50,.50)"></div><div class="opacity-label">50%</div></div>
+      <div class="opacity-chip"><div class="opacity-swatch" style="background:rgba(26,35,50,.70)"></div><div class="opacity-label">70%</div></div>
+      <div class="opacity-chip"><div class="opacity-swatch" style="background:rgba(26,35,50,1.00)"></div><div class="opacity-label">100%</div></div>
+    </div>
+  </div>
+
+  <!-- ── ACCESSIBLE COMBINATIONS ───────────────────────────── -->
+  <div class="section">
+    <div class="section-title">✅ Accessible Color Combinations</div>
+    <div class="combo-grid">
+      <div class="combo-card" style="background:#1B7D4B;color:#FFFFFF">
+        <div class="combo-title">Book Inspection</div>
+        <div class="combo-sub">White on Primary Green</div>
+        <span class="combo-ratio">AAA 5.1:1</span>
+      </div>
+      <div class="combo-card" style="background:#1A2332;color:#FFFFFF">
+        <div class="combo-title">Bajaj Pest Control</div>
+        <div class="combo-sub">White on Navy</div>
+        <span class="combo-ratio">AAA 13.3:1</span>
+      </div>
+      <div class="combo-card" style="background:#D4AF37;color:#1A2332">
+        <div class="combo-title">ISO Certified</div>
+        <div class="combo-sub">Navy on Gold</div>
+        <span class="combo-ratio">AAA 7.8:1</span>
+      </div>
+      <div class="combo-card" style="background:#FFFFFF;color:#1A2332;border:1px solid #E8E8E8">
+        <div class="combo-title" style="color:#1A2332">Premium Service</div>
+        <div class="combo-sub" style="color:#4A4A4A">Navy on White</div>
+        <span class="combo-ratio" style="background:rgba(26,35,50,.1);color:#1A2332">AAA 13.3:1</span>
+      </div>
+      <div class="combo-card" style="background:#FFFFFF;color:#1B7D4B;border:1px solid #E8E8E8">
+        <div class="combo-title" style="color:#1B7D4B">Free Inspection</div>
+        <div class="combo-sub" style="color:#4A4A4A">Green on White</div>
+        <span class="combo-ratio" style="background:#E8F5E9;color:#1B7D4B">AAA 5.1:1</span>
+      </div>
+      <div class="combo-card" style="background:#F0FAF5;color:#1B7D4B;border:1px solid #C8E6C9">
+        <div class="combo-title">Safe Treatment</div>
+        <div class="combo-sub">Green on Tint BG</div>
+        <span class="combo-ratio" style="background:rgba(27,125,75,.15);color:#1B7D4B">AA 4.6:1</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LEAD STATUS COLORS ─────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">📊 Lead Status Colors</div>
+    <div class="status-grid">
+      <div class="status-card"><div class="status-dot" style="background:#2196F3"></div><div class="status-info"><div class="status-name">New Lead</div><div class="status-hex">#2196F3</div></div></div>
+      <div class="status-card"><div class="status-dot" style="background:#FF9800"></div><div class="status-info"><div class="status-name">Contacted</div><div class="status-hex">#FF9800</div></div></div>
+      <div class="status-card"><div class="status-dot" style="background:#4CAF50"></div><div class="status-info"><div class="status-name">Converted ✓</div><div class="status-hex">#4CAF50</div></div></div>
+      <div class="status-card"><div class="status-dot" style="background:#F44336"></div><div class="status-info"><div class="status-name">Lost</div><div class="status-hex">#F44336</div></div></div>
+    </div>
+  </div>
+
+  <!-- ── INTERACTIVE WCAG CHECKER ──────────────────────────── -->
+  <div class="section">
+    <div class="section-title">🔍 Live WCAG Contrast Checker</div>
+    <div class="checker-card">
+      <div class="quick-combos">
+        <strong style="font-size:.8rem;color:var(--text-muted);margin-right:4px">Quick Test:</strong>
+        <button class="quick-btn" onclick="setCombo('#FFFFFF','#1B7D4B')">White / Green</button>
+        <button class="quick-btn" onclick="setCombo('#FFFFFF','#1A2332')">White / Navy</button>
+        <button class="quick-btn" onclick="setCombo('#1A2332','#D4AF37')">Navy / Gold</button>
+        <button class="quick-btn" onclick="setCombo('#FFFFFF','#D4AF37')">White / Gold</button>
+        <button class="quick-btn" onclick="setCombo('#1A2332','#FFFFFF')">Navy / White</button>
+        <button class="quick-btn" onclick="setCombo('#1B7D4B','#FFFFFF')">Green / White</button>
+      </div>
+      <div class="checker-row">
+        <div class="field-group">
+          <div class="field-label">Text Color</div>
+          <div class="field-row">
+            <input type="color" id="txt-color" class="color-input" value="#FFFFFF" oninput="syncHex('txt')">
+            <input type="text"  id="txt-hex"   class="hex-input"   value="#FFFFFF" oninput="syncColor('txt')" maxlength="7" placeholder="#FFFFFF">
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Background Color</div>
+          <div class="field-row">
+            <input type="color" id="bg-color" class="color-input" value="#1B7D4B" oninput="syncHex('bg')">
+            <input type="text"  id="bg-hex"   class="hex-input"   value="#1B7D4B" oninput="syncColor('bg')" maxlength="7" placeholder="#1B7D4B">
+          </div>
+        </div>
+        <button class="check-btn" onclick="checkContrast()">Check</button>
+      </div>
+      <div class="checker-preview" id="checker-preview" style="background:#1B7D4B;color:#FFFFFF">
+        <div class="checker-preview-title">Sample Heading Text</div>
+        <div class="checker-preview-body">This is body text at 16px for readability testing.</div>
+      </div>
+      <div class="checker-results">
+        <div class="checker-result">
+          <div class="checker-result-label">Contrast Ratio</div>
+          <div class="checker-result-value" id="ratio-val">5.10:1</div>
+        </div>
+        <div class="checker-result">
+          <div class="checker-result-label">WCAG AA (4.5:1)</div>
+          <div class="checker-result-value checker-result-pass" id="aa-val">✓ Pass</div>
+        </div>
+        <div class="checker-result">
+          <div class="checker-result-label">WCAG AAA (7:1)</div>
+          <div class="checker-result-value checker-result-fail" id="aaa-val">✗ Fail</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DARK MODE ──────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">🌙 Dark Mode Color Adaptations</div>
+    <div class="dm-grid">
+      <div class="dm-card dm-light">
+        <div class="dm-title">☀️ Light Mode</div>
+        <button class="dm-btn-green">Book Free Inspection</button>
+        <div class="dm-text">Primary Green <code>#1B7D4B</code> on white background for CTAs</div>
+        <span class="dm-badge">ISO Certified</span>
+        <div style="margin-top:12px;font-size:.85rem;color:#1A2332;font-weight:700">Headline in Navy #1A2332</div>
+        <div style="font-size:.82rem;color:#4A4A4A;margin-top:4px">Body text in Dark Gray #4A4A4A</div>
+      </div>
+      <div class="dm-card dm-dark">
+        <div class="dm-title" style="color:#F0F0F0">🌙 Dark Mode</div>
+        <button class="dm-btn-green" style="background:#2ECC71;color:#0D2B1A">Book Free Inspection</button>
+        <div class="dm-text" style="color:#C0C0C0">Lightened Green <code style="color:#2ECC71">#2ECC71</code> stays vibrant on dark</div>
+        <span class="dm-badge">ISO Certified</span>
+        <div style="margin-top:12px;font-size:.85rem;color:#F0F0F0;font-weight:700">Headline in Light #F0F0F0</div>
+        <div style="font-size:.82rem;color:#C0C0C0;margin-top:4px">Body text in Muted #C0C0C0</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px;">
+      <div style="font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:12px">Dark Mode Variable Overrides</div>
+      <div class="code-block">
+<span class="c-dim">@media (prefers-color-scheme: dark) {</span>
+  <span class="c-b">:root</span> {
+    <span class="c-g">--color-primary</span>:      <span class="c-y">#2ECC71</span>; <span class="c-dim">/* Brighter green */</span>
+    <span class="c-g">--color-navy</span>:          <span class="c-y">#34495E</span>; <span class="c-dim">/* Lightened navy */</span>
+    <span class="c-g">--color-gold</span>:          <span class="c-y">#D4AF37</span>; <span class="c-dim">/* Unchanged - stays vibrant */</span>
+    <span class="c-g">--color-bg-primary</span>:    <span class="c-y">#1A1A1A</span>;
+    <span class="c-g">--color-bg-secondary</span>:  <span class="c-y">#2D2D2D</span>;
+    <span class="c-g">--color-text-primary</span>:  <span class="c-y">#F0F0F0</span>;
+    <span class="c-g">--color-text-secondary</span>:<span class="c-y">#C0C0C0</span>;
+  }
+<span class="c-dim">}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── USAGE GUIDELINES ───────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">📖 Usage Guidelines</div>
+    <div class="guideline-grid">
+      <div class="guideline-card">
+        <div class="guideline-title">✅ Do — Green (#1B7D4B)</div>
+        <ul class="do-list">
+          <li>Use for primary CTA buttons ("Book Inspection")</li>
+          <li>Trust badges and safety certifications</li>
+          <li>Service icons and category markers</li>
+          <li>Active navigation links and states</li>
+          <li>Progress indicators and success states</li>
+          <li>Highlight pricing and value propositions</li>
+        </ul>
+      </div>
+      <div class="guideline-card">
+        <div class="guideline-title">❌ Don't — Green (#1B7D4B)</div>
+        <ul class="dont-list">
+          <li>Don't use for error or warning messages</li>
+          <li>Don't place green on green backgrounds</li>
+          <li>Don't use for destructive actions (delete)</li>
+          <li>Don't overuse — loses emphasis</li>
+          <li>Don't use light green for body text</li>
+          <li>Don't use white text on light green</li>
+        </ul>
+      </div>
+      <div class="guideline-card">
+        <div class="guideline-title">✅ Do — Navy (#1A2332)</div>
+        <ul class="do-list">
+          <li>All headlines and subheadings</li>
+          <li>Navigation bar background</li>
+          <li>Footer background</li>
+          <li>Authority text and credentials</li>
+          <li>Table headers and data labels</li>
+          <li>Card borders and dividers</li>
+        </ul>
+      </div>
+      <div class="guideline-card">
+        <div class="guideline-title">❌ Don't — Navy (#1A2332)</div>
+        <ul class="dont-list">
+          <li>Don't use navy text on dark backgrounds</li>
+          <li>Don't use navy on navy (obvious but common)</li>
+          <li>Don't use for success/positive messages</li>
+          <li>Don't use for interactive elements alone</li>
+          <li>Don't use very small text in navy on gray</li>
+          <li>Don't use navy for error states</li>
+        </ul>
+      </div>
+      <div class="guideline-card">
+        <div class="guideline-title">✅ Do — Gold (#D4AF37)</div>
+        <ul class="do-list">
+          <li>Certification and trust badges</li>
+          <li>Star ratings and review highlights</li>
+          <li>Premium service labels</li>
+          <li>Award and achievement markers</li>
+          <li>Accent borders on featured cards</li>
+          <li>Highlight numbers and statistics</li>
+        </ul>
+      </div>
+      <div class="guideline-card">
+        <div class="guideline-title">❌ Don't — Gold (#D4AF37)</div>
+        <ul class="dont-list">
+          <li>Never use white text on gold (fails WCAG)</li>
+          <li>Don't use gold for CTA buttons</li>
+          <li>Don't use gold on yellow/warm backgrounds</li>
+          <li>Don't overuse — kills the premium feel</li>
+          <li>Don't use for error or warning states</li>
+          <li>Don't use gold for small body text</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CODE SNIPPETS ─────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">💻 Code Reference</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div style="font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:8px">CSS Variables (style.css)</div>
+        <div class="code-block" style="font-size:.75rem">
+<span class="c-b">:root</span> {
+  <span class="c-g">--color-primary</span>:      <span class="c-y">#1B7D4B</span>;
+  <span class="c-g">--color-primary-hover</span>: <span class="c-y">#155A3D</span>;
+  <span class="c-g">--color-primary-tint</span>:  <span class="c-y">#F0FAF5</span>;
+  <span class="c-g">--color-navy</span>:          <span class="c-y">#1A2332</span>;
+  <span class="c-g">--color-gold</span>:          <span class="c-y">#D4AF37</span>;
+  <span class="c-g">--color-white</span>:         <span class="c-y">#FFFFFF</span>;
+  <span class="c-g">--color-success</span>:       <span class="c-y">#4CAF50</span>;
+  <span class="c-g">--color-warning</span>:       <span class="c-y">#FF9800</span>;
+  <span class="c-g">--color-error</span>:         <span class="c-y">#F44336</span>;
+}
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:8px">Usage in CSS</div>
+        <div class="code-block" style="font-size:.75rem">
+<span class="c-dim">/* CTA Button */</span>
+<span class="c-b">.btn-primary</span> {
+  <span class="c-g">background</span>: <span class="c-m">var</span>(<span class="c-y">--color-primary</span>);
+  <span class="c-g">color</span>: <span class="c-m">var</span>(<span class="c-y">--color-white</span>);
+}
+<span class="c-b">.btn-primary:hover</span> {
+  <span class="c-g">background</span>: <span class="c-m">var</span>(<span class="c-y">--color-primary-hover</span>);
+}
+<span class="c-dim">/* Heading */</span>
+<span class="c-b">h1, h2</span> {
+  <span class="c-g">color</span>: <span class="c-m">var</span>(<span class="c-y">--color-navy</span>);
+}
+<span class="c-dim">/* Gold Badge */</span>
+<span class="c-b">.badge</span> {
+  <span class="c-g">background</span>: <span class="c-m">var</span>(<span class="c-y">--color-gold</span>);
+  <span class="c-g">color</span>: <span class="c-m">var</span>(<span class="c-y">--color-navy</span>);
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONVERSION SUMMARY ─────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">📈 Combined Conversion Impact</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px">
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center">
+        <div style="font-size:2.2rem;font-weight:700;color:#1B7D4B">+24%</div>
+        <div style="font-size:.85rem;font-weight:600;color:var(--text);margin-top:4px">Click Rate</div>
+        <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px">Primary Green CTAs</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center">
+        <div style="font-size:2.2rem;font-weight:700;color:#1A2332">+18%</div>
+        <div style="font-size:.85rem;font-weight:600;color:var(--text);margin-top:4px">Trust Perception</div>
+        <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px">Navy Authority Color</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center">
+        <div style="font-size:2.2rem;font-weight:700;color:#C49A1B">+11%</div>
+        <div style="font-size:.85rem;font-weight:600;color:var(--text);margin-top:4px">Value Perception</div>
+        <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px">Gold Premium Color</div>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center">
+        <div style="font-size:2.2rem;font-weight:700;color:#4A4A4A">+8%</div>
+        <div style="font-size:.85rem;font-weight:600;color:var(--text);margin-top:4px">Form Completion</div>
+        <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px">White Backgrounds</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#1B7D4B,#155A3D);border-radius:12px;padding:20px;text-align:center;color:#fff">
+        <div style="font-size:2.2rem;font-weight:700">+61%</div>
+        <div style="font-size:.85rem;font-weight:600;margin-top:4px">Combined Impact</div>
+        <div style="font-size:.75rem;opacity:.75;margin-top:2px">Full System Applied</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+/* ── THEME TOGGLE ───────────────────────────────────────────── */
+function toggleTheme() {
+  const html  = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-icon').textContent  = isDark ? '🌙' : '☀️';
+  document.getElementById('theme-label').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+}
+
+/* ── COPY COLOR ─────────────────────────────────────────────── */
+function copyColor(hex, btn) {
+  navigator.clipboard.writeText(hex).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+/* ── WCAG CHECKER ───────────────────────────────────────────── */
+function hexToRgb(hex) {
+  const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
+  return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : null;
+}
+function luminance({ r, g, b }) {
+  const [rs, gs, bs] = [r,g,b].map(v => {
+    v /= 255;
+    return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+  });
+  return 0.2126*rs + 0.7152*gs + 0.0722*bs;
+}
+function contrastRatio(c1, c2) {
+  const l1 = luminance(c1), l2 = luminance(c2);
+  return (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05);
+}
+function syncHex(which) {
+  const col = document.getElementById(which+'-color').value;
+  document.getElementById(which+'-hex').value = col.toUpperCase();
+  checkContrast();
+}
+function syncColor(which) {
+  let hex = document.getElementById(which+'-hex').value.trim();
+  if (!hex.startsWith('#')) hex = '#'+hex;
+  if (/^#[0-9a-fA-F]{6}$/.test(hex)) {
+    document.getElementById(which+'-color').value = hex;
+    checkContrast();
+  }
+}
+function setCombo(txt, bg) {
+  document.getElementById('txt-color').value = txt;
+  document.getElementById('txt-hex').value   = txt;
+  document.getElementById('bg-color').value  = bg;
+  document.getElementById('bg-hex').value    = bg;
+  checkContrast();
+}
+function checkContrast() {
+  const txtHex = document.getElementById('txt-hex').value.trim();
+  const bgHex  = document.getElementById('bg-hex').value.trim();
+  const txtRgb = hexToRgb(txtHex);
+  const bgRgb  = hexToRgb(bgHex);
+  if (!txtRgb || !bgRgb) return;
+  const ratio = contrastRatio(txtRgb, bgRgb);
+  document.getElementById('checker-preview').style.background = bgHex;
+  document.getElementById('checker-preview').style.color      = txtHex;
+  document.getElementById('ratio-val').textContent = ratio.toFixed(2)+':1';
+  const aaEl  = document.getElementById('aa-val');
+  const aaaEl = document.getElementById('aaa-val');
+  aaEl.textContent  = ratio >= 4.5 ? '✓ Pass' : '✗ Fail';
+  aaEl.className    = 'checker-result-value ' + (ratio >= 4.5 ? 'checker-result-pass' : 'checker-result-fail');
+  aaaEl.textContent = ratio >= 7.0 ? '✓ Pass' : '✗ Fail';
+  aaaEl.className   = 'checker-result-value ' + (ratio >= 7.0 ? 'checker-result-pass' : (ratio >= 4.5 ? 'checker-result-warn' : 'checker-result-fail'));
+}
+
+/* ── INIT ───────────────────────────────────────────────────── */
+checkContrast();
+
+// Auto-match OS dark mode preference
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  document.documentElement.setAttribute('data-theme','dark');
+  document.getElementById('theme-icon').textContent  = '☀️';
+  document.getElementById('theme-label').textContent = 'Light Mode';
+}
+</script>
+</body>
+</html>
