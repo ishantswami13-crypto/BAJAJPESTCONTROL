@@ -1434,12 +1434,12 @@ p { color: var(--text-body); font-family: var(--font-body); }
 
 .t-slider {
   position: relative;
-  min-height: 320px; /* JS overrides with exact height after measuring */
 }
 
+/* Inactive cards: absolutely positioned so they don't affect height */
 .t-card {
   position: absolute;
-  inset: 0;
+  top: 0; left: 0; right: 0;
   background: var(--white);
   border-radius: var(--r-2xl);
   padding: 40px;
@@ -1449,7 +1449,9 @@ p { color: var(--text-body); font-family: var(--font-body); }
   transform: translateX(24px);
   pointer-events: none;
 }
+/* Active card: relative so the slider grows to fit its full height */
 .t-card.active {
+  position: relative;
   opacity: 1;
   transform: translateX(0);
   pointer-events: auto;
@@ -1983,21 +1985,13 @@ p { color: var(--text-body); font-family: var(--font-body); }
   }
   .mid-cta h2 { font-size: 1.4rem; }
 
-  /* ── TESTIMONIALS ── */
-  .t-slider { min-height: unset; height: auto; }
-  .t-card {
-    position: relative;
-    inset: auto;
-    display: none;
-    opacity: 1;
-    transform: none;
-    padding: 24px 18px;
-  }
-  .t-card.active { display: block; transform: none; }
-  .t-text { font-size: .9rem; margin-bottom: 20px; }
-  .t-quote-mark { font-size: 3rem; margin-bottom: 0; }
-  .t-author { flex-wrap: wrap; gap: 10px; }
-  .t-stars { margin-left: 0; width: 100%; }
+  /* ── TESTIMONIALS — mobile padding tweak only
+     (active card is already position:relative from base CSS) */
+  .t-card        { padding: 24px 18px; }
+  .t-text        { font-size: .9rem; margin-bottom: 20px; }
+  .t-quote-mark  { font-size: 3rem; margin-bottom: 0; }
+  .t-author      { flex-wrap: wrap; gap: 10px; }
+  .t-stars       { margin-left: 0; width: 100%; }
 
   /* ── CONTACT FORM ── */
   .form-row { grid-template-columns: 1fr; }
