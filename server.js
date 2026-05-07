@@ -27,12 +27,16 @@ const app  = express();
 const PORT = process.env.PORT || 8083;
 
 /* ── DATA DIRECTORY ──────────────────────────────────────────── */
-const DATA_DIR  = path.join(__dirname, 'data');
+// On Vercel (serverless) the filesystem is read-only except /tmp
+const IS_VERCEL  = process.env.VERCEL === '1' || process.env.VERCEL_ENV !== undefined;
+const DATA_DIR   = IS_VERCEL ? '/tmp' : path.join(__dirname, 'data');
 const LEADS_FILE = path.join(DATA_DIR, 'leads.json');
 const LOG_FILE   = path.join(DATA_DIR, 'server.log');
 
-if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-if (!fs.existsSync(LEADS_FILE)) fs.writeFileSync(LEADS_FILE, '[]');
+try {
+  if (!IS_VERCEL && !fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (!fs.existsSync(LEADS_FILE)) fs.writeFileSync(LEADS_FILE, '[]');
+} catch (e) { /* ignore on read-only fs */ }
 
 /* ── SECURITY HEADERS ────────────────────────────────────────── */
 app.use(helmet({
@@ -60,9 +64,11 @@ app.use((req, res, next) => {
 
 /* ── MIDDLEWARE ──────────────────────────────────────────────── */
 app.use(cors({ origin: '*', methods: ['GET', 'POST'] }));
-app.use(morgan('combined', {
-  stream: fs.createWriteStream(LOG_FILE, { flags: 'a' })
-}));
+try {
+  app.use(morgan('combined', {
+    stream: fs.createWriteStream(LOG_FILE, { flags: 'a' })
+  }));
+} catch (e) { /* skip file logging on read-only fs */ }
 app.use(morgan('dev')); // Console output
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -404,17 +410,20 @@ app.get('*', (req, res) => {
 });
 
 /* ── START SERVER ────────────────────────────────────────────── */
-app.listen(PORT, () => {
-  console.log('\n╔═══════════════════════════════════════════════════╗');
-  console.log('║       BAJAJ PEST CONTROL — Server Running          ║');
-  console.log('╠═══════════════════════════════════════════════════╣');
-  console.log(`║  🌐  Website :  http://localhost:${PORT}              ║`);
-  console.log(`║  🔐  Admin   :  http://localhost:${PORT}/admin/        ║`);
-  console.log(`║  📊  Health  :  http://localhost:${PORT}/api/health    ║`);
-  console.log(`║  📁  Leads   :  ${LEADS_FILE}  ║`);
-  console.log('╠═══════════════════════════════════════════════════╣');
-  console.log(`║  Password: ${process.env.ADMIN_PASSWORD || 'bajaj@admin2024'}                          ║`);
-  console.log('╚═══════════════════════════════════════════════════╝\n');
-});
+// Only bind to a port when running directly (not imported by Vercel serverless)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log('\n╔═══════════════════════════════════════════════════╗');
+    console.log('║       BAJAJ PEST CONTROL — Server Running          ║');
+    console.log('╠═══════════════════════════════════════════════════╣');
+    console.log(`║  🌐  Website :  http://localhost:${PORT}              ║`);
+    console.log(`║  🔐  Admin   :  http://localhost:${PORT}/admin/        ║`);
+    console.log(`║  📊  Health  :  http://localhost:${PORT}/api/health    ║`);
+    console.log(`║  📁  Leads   :  ${LEADS_FILE}  ║`);
+    console.log('╠═══════════════════════════════════════════════════╣');
+    console.log(`║  Password: ${process.env.ADMIN_PASSWORD || 'bajaj@admin2024'}                          ║`);
+    console.log('╚═══════════════════════════════════════════════════╝\n');
+  });
+}
 
 module.exports = app;
