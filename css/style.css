@@ -1434,7 +1434,7 @@ p { color: var(--text-body); font-family: var(--font-body); }
 
 .t-slider {
   position: relative;
-  min-height: 300px;
+  min-height: 320px; /* JS overrides with exact height after measuring */
 }
 
 .t-card {

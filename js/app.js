@@ -100,12 +100,44 @@
 
   /* ── TESTIMONIALS ──────────────────────────────────────────── */
   function initTestimonials() {
-    const cards = document.querySelectorAll('.t-card');
-    const dots  = document.querySelectorAll('.t-dot');
+    const slider = document.getElementById('t-slider');
+    const cards  = document.querySelectorAll('.t-card');
+    const dots   = document.querySelectorAll('.t-dot');
     if (!cards.length) return;
 
     let current = 0;
     let timer;
+
+    /* ── AUTO-SIZE SLIDER ──────────────────────────────────────
+       Measure every card at full opacity so we can set the slider
+       height to the tallest one — prevents any card being clipped.
+    ────────────────────────────────────────────────────────── */
+    function fitSlider() {
+      if (!slider) return;
+      // Only apply fixed height on desktop (mobile uses block layout)
+      if (window.innerWidth <= 640) { slider.style.height = ''; return; }
+
+      // Temporarily make all cards visible & in-flow to measure
+      cards.forEach(c => {
+        c.style.visibility = 'hidden';
+        c.style.opacity    = '1';
+        c.style.position   = 'relative';
+        c.style.display    = 'block';
+      });
+
+      let maxH = 0;
+      cards.forEach(c => { maxH = Math.max(maxH, c.offsetHeight); });
+
+      // Restore absolute positioning
+      cards.forEach(c => {
+        c.style.visibility = '';
+        c.style.opacity    = '';
+        c.style.position   = '';
+        c.style.display    = '';
+      });
+
+      slider.style.height = (maxH + 8) + 'px'; // +8px breathing room
+    }
 
     function goTo(idx) {
       cards[current].classList.remove('active');
@@ -126,6 +158,10 @@
         startAuto();
       });
     });
+
+    // Size on load, then re-size if window resizes
+    fitSlider();
+    window.addEventListener('resize', fitSlider);
 
     startAuto();
   }
