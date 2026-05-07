@@ -11,19 +11,30 @@
           "js/**",
           "admin/**",
           "docs/**",
-          "data/.gitkeep",
           "performance-report.html",
           "sitemap.xml",
           "robots.txt"
         ]
       }
-    }
+    },
+    { "src": "index.html",            "use": "@vercel/static" },
+    { "src": "css/**",                "use": "@vercel/static" },
+    { "src": "js/**",                 "use": "@vercel/static" },
+    { "src": "admin/index.html",      "use": "@vercel/static" },
+    { "src": "sitemap.xml",           "use": "@vercel/static" },
+    { "src": "robots.txt",            "use": "@vercel/static" },
+    { "src": "performance-report.html","use": "@vercel/static" }
   ],
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/server.js"
-    }
+    { "src": "/api/(.*)",      "dest": "/server.js" },
+    { "src": "/css/(.*)",      "dest": "/css/$1" },
+    { "src": "/js/(.*)",       "dest": "/js/$1" },
+    { "src": "/admin",         "dest": "/admin/index.html" },
+    { "src": "/admin/(.*)",    "dest": "/admin/$1" },
+    { "src": "/sitemap.xml",   "dest": "/sitemap.xml" },
+    { "src": "/robots.txt",    "dest": "/robots.txt" },
+    { "src": "/performance-report.html", "dest": "/performance-report.html" },
+    { "src": "/(.*)",          "dest": "/index.html" }
   ],
   "env": {
     "NODE_ENV": "production"
