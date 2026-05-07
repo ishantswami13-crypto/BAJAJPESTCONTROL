@@ -41,13 +41,15 @@
   --r-sm: .5rem; --r-md: .75rem; --r-lg: 1rem; --r-xl: 1.5rem; --r-2xl: 2rem;
 }
 
-html { scroll-behavior: smooth; font-size: 16px; }
+html { scroll-behavior: smooth; font-size: 16px; overflow-x: hidden; }
 body {
   font-family: var(--font-body);
   color: var(--text-body);
   background: var(--white);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 img { display: block; max-width: 100%; }
@@ -1797,62 +1799,103 @@ p { color: var(--text-body); font-family: var(--font-body); }
 }
 
 @media (max-width: 640px) {
-  /* NAV */
+
+  /* ── PREVENT HORIZONTAL SCROLL ── */
+  *, *::before, *::after { max-width: 100%; }
+
+  /* ── HEADER ── */
   .main-nav { display: none; }
   .header-phone { display: none; }
+  .header-inner {
+    height: 60px;
+    gap: 8px;
+    padding: 0;
+  }
+  .logo-name { font-size: .85rem; }
+  .logo-sub  { font-size: .58rem; }
+  .logo-mark { width: 34px; height: 34px; font-size: .95rem; }
+  /* Header CTA button — keep visible but compact */
+  .header-right .btn {
+    padding: 0 14px;
+    height: 38px;
+    font-size: .8rem;
+    white-space: nowrap;
+  }
 
-  /* HERO */
-  .hero-section { padding: 80px 0 56px; }
-  .hero-title { font-size: 2rem; }
-  .hero-sub { font-size: .95rem; }
-  .hero-actions { flex-direction: column; align-items: stretch; gap: 12px; }
-  .hero-actions .btn { text-align: center; }
+  /* ── HERO ── */
+  .hero-section { padding: 80px 0 48px; }
+  .hero-title { font-size: 1.85rem; line-height: 1.2; }
+  .hero-sub { font-size: .9rem; }
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+  }
+  .hero-actions .btn {
+    text-align: center;
+    width: 100%;
+    justify-content: center;
+  }
   .hero-rating { flex-wrap: wrap; gap: 8px; justify-content: center; }
 
-  /* GRIDS */
+  /* ── SECTION HEADINGS ── */
+  h2 { font-size: 1.5rem; }
+  .section-title { font-size: 1.5rem; }
+  .section-label { font-size: .7rem; }
+
+  /* ── GRIDS ── */
   .services-grid,
   .services-grid-bottom { grid-template-columns: 1fr; }
-  .why-grid { grid-template-columns: 1fr; }
-  .trust-grid { grid-template-columns: 1fr; }
+  .why-grid            { grid-template-columns: 1fr; }
+  .trust-grid          { grid-template-columns: 1fr; }
   .trust-stat:not(:last-child)::after { display: none; }
 
-  /* TESTIMONIALS — fix card overflow on mobile */
-  .t-slider {
-    min-height: unset;
-    height: auto;
+  /* ── MID-CTA BANNER (Stop Pests Before...) ── */
+  .mid-cta-inner {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
   }
+  .mid-cta-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 12px;
+  }
+  .mid-cta-actions .btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+  .mid-cta h2 { font-size: 1.4rem; }
+
+  /* ── TESTIMONIALS ── */
+  .t-slider { min-height: unset; height: auto; }
   .t-card {
     position: relative;
     inset: auto;
     display: none;
     opacity: 1;
     transform: none;
-    padding: 24px 20px;
+    padding: 24px 18px;
   }
-  .t-card.active {
-    display: block;
-    transform: none;
-  }
-  .t-text { font-size: .95rem; margin-bottom: 20px; }
-  .t-quote-mark { font-size: 3.5rem; margin-bottom: 0; }
+  .t-card.active { display: block; transform: none; }
+  .t-text { font-size: .9rem; margin-bottom: 20px; }
+  .t-quote-mark { font-size: 3rem; margin-bottom: 0; }
   .t-author { flex-wrap: wrap; gap: 10px; }
   .t-stars { margin-left: 0; width: 100%; }
 
-  /* CTA FORM */
+  /* ── CONTACT FORM ── */
   .form-row { grid-template-columns: 1fr; }
-  .cta-contact-alts { flex-direction: column; }
-  .mid-cta-inner { flex-direction: column; text-align: center; }
-  .mid-cta-actions { justify-content: center; }
+  .cta-contact-alts { flex-direction: column; align-items: stretch; }
+  .cta-contact-alts .btn { width: 100%; text-align: center; justify-content: center; }
 
-  /* FOOTER */
-  .footer-grid { grid-template-columns: 1fr; }
+  /* ── FOOTER ── */
+  .footer-grid   { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; text-align: center; }
 
-  /* FABs */
+  /* ── FABs ── */
   .fab .fab-label { display: none; }
   .fab { padding: 0; width: 52px; justify-content: center; }
-
-  /* SECTION HEADINGS */
-  .section-title { font-size: 1.6rem; }
-  h2 { font-size: 1.5rem; }
 }
