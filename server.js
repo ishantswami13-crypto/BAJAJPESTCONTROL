@@ -4,7 +4,9 @@
  *  - Static file serving
  *  - Lead capture API (/api/leads)
  *  - Admin dashboard API (/api/admin/*)
- *  - Email notifications (Nodemailer)
+ *  - Firebase Firestore (cloud lead storage, falls back to JSON)
+ *  - SendGrid email (falls back to Nodemailer)
+ *  - Twilio WhatsApp notifications
  *  - CSV lead export
  *  - Security headers (Helmet)
  *  - Request logging (Morgan)
@@ -22,6 +24,18 @@ const cors       = require('cors');
 const path       = require('path');
 const fs         = require('fs');
 const { v4: uuidv4 } = require('uuid');
+
+// ── NEW: Firebase / SendGrid / Twilio libs ────────────────────
+const {
+  addLeadToFirestore,
+  getAllLeadsFromFirestore,
+  updateLeadInFirestore,
+  deleteLeadFromFirestore,
+  getStatsFromFirestore,
+} = require('./lib/firebase');
+
+const { sendEmail, getCustomerConfirmationEmail, getAdminAlertEmail } = require('./lib/email');
+const { sendWhatsApp, WHATSAPP_MESSAGES } = require('./lib/whatsapp');
 
 const app  = express();
 const PORT = process.env.PORT || 8083;
@@ -225,10 +239,7 @@ app.post('/api/leads', async (req, res) => {
     if (!phone || !validatePhone(phone))    errors.push('Valid phone number is required');
     if (!city  || city.trim().length  < 2) errors.push('City is required');
     if (!service || service.trim().length < 2) errors.push('Service type is required');
-
-    if (errors.length) {
-      return res.status(400).json({ success: false, errors });
-    }
+    if (errors.length) return res.status(400).json({ success: false, errors });
 
     const now = new Date();
     const lead = {
@@ -248,21 +259,69 @@ app.post('/api/leads', async (req, res) => {
       createdAt: now.toISOString(),
     };
 
-    // Save
-    const leads = readLeads();
-    leads.unshift(lead);
-    writeLeads(leads);
+    // ── 1. Save to Firebase Firestore (primary) ───────────────
+    const fbResult = await addLeadToFirestore(lead);
+    let savedId = lead.id;
+
+    if (fbResult.success) {
+      savedId = fbResult.id;
+      console.log(`[LEAD] ✅ Saved to Firestore: ${fbResult.id}`);
+    } else {
+      // ── Fallback: save to local JSON ─────────────────────────
+      console.warn('[LEAD] Firestore unavailable — saving to local JSON');
+      const leads = readLeads();
+      leads.unshift(lead);
+      writeLeads(leads);
+    }
 
     console.log(`[LEAD] New: ${lead.name} | ${lead.phone} | ${lead.city} | ${lead.service}`);
 
-    // Async notifications (don't block response)
-    sendNotification(lead).catch(console.error);
-    sendWebhook(lead).catch(console.error);
+    // ── 2. Fire all notifications async (never block response) ─
+    Promise.allSettled([
+      // SendGrid / Nodemailer — customer confirmation
+      lead.email
+        ? sendEmail({
+            to: lead.email,
+            subject: '✅ Free Inspection Confirmed — Bajaj Pest Control',
+            html: getCustomerConfirmationEmail(lead.name),
+          })
+        : Promise.resolve(),
+
+      // SendGrid / Nodemailer — admin alert
+      sendEmail({
+        to: process.env.NOTIFY_EMAIL || 'bajajpeastcontol1@gmail.com',
+        subject: `🔔 NEW LEAD: ${lead.name} from ${lead.city}`,
+        html: getAdminAlertEmail(lead),
+      }),
+
+      // Twilio WhatsApp — customer confirmation
+      lead.phone
+        ? sendWhatsApp({
+            phone: lead.phone,
+            message: WHATSAPP_MESSAGES.customerConfirmation(lead.name, lead.phone),
+          })
+        : Promise.resolve(),
+
+      // Twilio WhatsApp — admin alert
+      process.env.ADMIN_PHONE
+        ? sendWhatsApp({
+            phone: process.env.ADMIN_PHONE,
+            message: WHATSAPP_MESSAGES.adminAlert(lead.name, lead.city, lead.phone, lead.service),
+          })
+        : Promise.resolve(),
+
+      // Webhook / CRM
+      sendWebhook(lead),
+    ]).then(results => {
+      results.forEach((r, i) => {
+        if (r.status === 'rejected') console.error(`[NOTIFY] Task ${i} failed:`, r.reason);
+      });
+    });
 
     res.status(201).json({
       success: true,
       message: "Request received! We'll call you within 2 hours.",
-      leadId: lead.id,
+      leadId: savedId,
     });
 
   } catch (err) {
@@ -294,57 +353,79 @@ function adminAuth(req, res, next) {
 }
 
 /* ── GET /api/admin/leads — Get all leads (admin) ────────────── */
-app.get('/api/admin/leads', adminAuth, (req, res) => {
-  const leads  = readLeads();
+app.get('/api/admin/leads', adminAuth, async (req, res) => {
   const { status, city, service, q } = req.query;
-  let filtered = leads;
 
-  if (status)  filtered = filtered.filter(l => l.status === status);
-  if (city)    filtered = filtered.filter(l => l.city === city);
-  if (service) filtered = filtered.filter(l => l.service === service);
-  if (q) {
-    const query = q.toLowerCase();
-    filtered = filtered.filter(l =>
-      l.name?.toLowerCase().includes(query) ||
-      l.phone?.includes(query) ||
-      l.city?.toLowerCase().includes(query)
-    );
+  // Try Firestore first, fall back to JSON
+  const fbResult = await getAllLeadsFromFirestore({ status, city, service, q });
+
+  let leads, filtered;
+  if (fbResult.success) {
+    leads    = fbResult.data;
+    filtered = leads;
+  } else {
+    leads    = readLeads();
+    filtered = leads;
+    if (status)  filtered = filtered.filter(l => l.status === status);
+    if (city)    filtered = filtered.filter(l => l.city === city);
+    if (service) filtered = filtered.filter(l => l.service === service);
+    if (q) {
+      const ql = q.toLowerCase();
+      filtered = filtered.filter(l =>
+        l.name?.toLowerCase().includes(ql) ||
+        l.phone?.includes(ql) ||
+        l.city?.toLowerCase().includes(ql)
+      );
+    }
   }
 
+  const today = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
   const stats = {
     total:     leads.length,
     new:       leads.filter(l => l.status === 'new').length,
     contacted: leads.filter(l => l.status === 'contacted').length,
     converted: leads.filter(l => l.status === 'converted').length,
-    today:     leads.filter(l => l.date === new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })).length,
+    today:     leads.filter(l => l.date === today || l.createdAt?.startsWith(new Date().toISOString().slice(0,10))).length,
   };
 
-  res.json({ success: true, leads: filtered, stats });
+  res.json({ success: true, leads: filtered, stats, source: fbResult.success ? 'firestore' : 'local' });
 });
 
 /* ── PATCH /api/admin/leads/:id — Update lead status ─────────── */
-app.patch('/api/admin/leads/:id', adminAuth, (req, res) => {
-  const { id }     = req.params;
+app.patch('/api/admin/leads/:id', adminAuth, async (req, res) => {
+  const { id } = req.params;
   const { status, notes } = req.body;
-  const leads      = readLeads();
-  const idx        = leads.findIndex(l => l.id === id);
+  const updates = {};
+  if (status) updates.status = sanitize(status);
+  if (notes)  updates.notes  = sanitize(notes);
 
+  // Try Firestore first
+  const fbResult = await updateLeadInFirestore(id, updates);
+  if (fbResult.success) {
+    return res.json({ success: true, source: 'firestore' });
+  }
+
+  // Fallback: JSON
+  const leads = readLeads();
+  const idx   = leads.findIndex(l => l.id === id);
   if (idx === -1) return res.status(404).json({ success: false, message: 'Lead not found' });
-
-  if (status) leads[idx].status = sanitize(status);
-  if (notes)  leads[idx].notes  = sanitize(notes);
-  leads[idx].updatedAt = new Date().toISOString();
+  Object.assign(leads[idx], updates, { updatedAt: new Date().toISOString() });
   writeLeads(leads);
-
-  res.json({ success: true, lead: leads[idx] });
+  res.json({ success: true, lead: leads[idx], source: 'local' });
 });
 
 /* ── DELETE /api/admin/leads/:id — Delete lead ───────────────── */
-app.delete('/api/admin/leads/:id', adminAuth, (req, res) => {
+app.delete('/api/admin/leads/:id', adminAuth, async (req, res) => {
   const { id } = req.params;
-  const leads  = readLeads().filter(l => l.id !== id);
+
+  // Try Firestore first
+  const fbResult = await deleteLeadFromFirestore(id);
+  if (fbResult.success) return res.json({ success: true, source: 'firestore' });
+
+  // Fallback: JSON
+  const leads = readLeads().filter(l => l.id !== id);
   writeLeads(leads);
-  res.json({ success: true });
+  res.json({ success: true, source: 'local' });
 });
 
 /* ── GET /api/admin/export — Export CSV ─────────────────────── */
