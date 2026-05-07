@@ -7,43 +7,50 @@
   <!-- Homepage -->
   <url>
     <loc>https://www.bajajpestcontrol.in/</loc>
-    <lastmod>2024-11-01</lastmod>
+    <lastmod>2026-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Sections (anchor links) -->
+  <!-- City Landing Pages (HIGH SEO VALUE) -->
   <url>
-    <loc>https://www.bajajpestcontrol.in/#services</loc>
-    <lastmod>2024-11-01</lastmod>
+    <loc>https://www.bajajpestcontrol.in/pest-control-mumbai</loc>
+    <lastmod>2026-05-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://www.bajajpestcontrol.in/#why</loc>
-    <lastmod>2024-11-01</lastmod>
+    <loc>https://www.bajajpestcontrol.in/pest-control-delhi</loc>
+    <lastmod>2026-05-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://www.bajajpestcontrol.in/#coverage</loc>
-    <lastmod>2024-11-01</lastmod>
+    <loc>https://www.bajajpestcontrol.in/pest-control-bangalore</loc>
+    <lastmod>2026-05-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://www.bajajpestcontrol.in/#testimonials</loc>
-    <lastmod>2024-11-01</lastmod>
+    <loc>https://www.bajajpestcontrol.in/pest-control-pune</loc>
+    <lastmod>2026-05-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://www.bajajpestcontrol.in/#cta</loc>
-    <lastmod>2024-11-01</lastmod>
+    <loc>https://www.bajajpestcontrol.in/pest-control-hyderabad</loc>
+    <lastmod>2026-05-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.bajajpestcontrol.in/pest-control-chennai</loc>
+    <lastmod>2026-05-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
